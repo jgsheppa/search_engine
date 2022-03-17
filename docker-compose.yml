@@ -1,0 +1,11 @@
+version: '3.9'
+
+services:
+  redis:
+    image: 'redis:7.0-rc2-alpine'
+    ports:
+      - '6379:6379'
+  redisearch:
+    image: 'redislabs/redisearch:latest'
+    ports:
+      - '6380:6379'

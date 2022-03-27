@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/RediSearch/redisearch-go/redisearch"
@@ -18,7 +17,12 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 
 var pool = redis.NewPool()
 
+type App struct {
+	Router *mux.Router
+}
+
 func main() {
+
 	r := mux.NewRouter()
 	port := "3000"
 
@@ -27,27 +31,29 @@ func main() {
 
 	// Create a client. By default a client is schemaless
 	// unless a schema is provided when creating the index
-	c := redisearch.NewClient("localhost:6380", "myIndex")
+	c := redisearch.NewClientFromPool(pool, "todo_index2")
+
 
 	// Create a schema
 	sc := redisearch.NewSchema(redisearch.DefaultOptions).
-		AddField(redisearch.NewTextField("body")).
-		AddField(redisearch.NewTextFieldOptions("title", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
-		AddField(redisearch.NewNumericField("date"))
+	AddField(redisearch.NewNumericField("date")).
+	AddField(redisearch.NewNumericField("id")).
+	AddField(redisearch.NewTextFieldOptions("name", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true}))
 
-	// Drop an existing index. If the index does not exist an error is returned
 	c.Drop()
 
 	// Create the index with the given schema
-	if err := c.CreateIndex(sc); err != nil {
-		log.Fatal(err)
+	err := c.CreateIndex(sc) 
+	if err != nil {
+		fmt.Println("Index already exists")
 	}
 
-	articleController := controllers.NewArticle(client, *c)
+	searchController := controllers.NewArticle(client, *c)
 
-	r.HandleFunc("/search/{term}", articleController.Search).Methods("GET")
-	r.HandleFunc("/create/{document}/{title}", articleController.CreateArticle).Methods("POST")
-	r.HandleFunc("/delete", articleController.Delete).Methods("GET")
+	r.HandleFunc("/documents", searchController.PostDocuments).Methods("POST")
+	r.HandleFunc("/documents/{document}", searchController.DeleteDocument).Methods("POST")
+	r.HandleFunc("/field", searchController.PostField).Methods("POST")
+	r.HandleFunc("/search/{term}", searchController.Search).Methods("GET")
 
 	// HandlerFunc converts notFound to the correct type
 	r.NotFoundHandler = http.HandlerFunc(NotFound)

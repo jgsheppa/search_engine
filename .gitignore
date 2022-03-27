@@ -1,2 +1,6 @@
 scratch.txt
 go.sum
+
+.env
+
+data

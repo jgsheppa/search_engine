@@ -8,7 +8,7 @@ import (
 func TestCreateSuggestions(t *testing.T) {
 	words := [10]string{"How", "to", "lose", "a", "guy", "in", "ten", "days", "The", "Dude"}
 
-	article := Todo{
+	article := Article{
 		Document: "article1",
 		Author:   "The Dude",
 		ID:       1,

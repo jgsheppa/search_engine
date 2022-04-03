@@ -95,13 +95,31 @@ type SuggestOptions struct {
 func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	term := mux.Vars(r)["term"]
+	sortBy := "date"
 
+	SearchAndSuggest(w, rdb, term, sortBy)
+
+}
+
+func (rdb *RedisDB) SearchAndSort(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	term := mux.Vars(r)["term"]
+	sortBy := mux.Vars(r)["sortBy"]
+
+	SearchAndSuggest(w, rdb, term, sortBy)
+
+}
+
+func SearchAndSuggest(w http.ResponseWriter, rdb *RedisDB, term string, sortBy string) {
 	var HighlightedFields []string
 	HighlightedFields = append(HighlightedFields, "title")
 
 	// Searching with limit and sorting
 	docs, total, err := rdb.redisSearch.Search(redisearch.NewQuery(term).
-		Limit(0, 5).Highlight(HighlightedFields, "<b>", "</b>"))
+		Limit(0, 5).
+		Highlight(HighlightedFields, "<b>", "</b>").
+		SetSortBy(sortBy, true))
+
 	if err != nil {
 		panic(err)
 	}
@@ -121,13 +139,16 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 			WithPayloads: true,
 			WithScores:   true,
 		}
-		auto, err = rdb.autoCompleter.SuggestOpts(term, opts)
+		auto, err := rdb.autoCompleter.SuggestOpts(term, opts)
 		if err != nil {
 			panic(err)
 		}
 
-		docs, total, err = rdb.redisSearch.Search(redisearch.NewQuery(auto[0].Payload).
-			Limit(0, 5).Highlight(HighlightedFields, "<b>", "</b>"))
+		docs, total, err := rdb.redisSearch.Search(redisearch.NewQuery(auto[0].Payload).
+			Limit(0, 5).
+			Highlight(HighlightedFields, "<b>", "</b>").
+			SetSortBy(sortBy, true))
+
 		if err != nil {
 			panic(err)
 		}
@@ -151,8 +172,8 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 		}
 
 		err = json.NewEncoder(w).Encode(result)
-	}
 
+	}
 	if err != nil {
 		log.Println("failed to encode response")
 		http.Error(w, err.Error(), http.StatusInternalServerError)

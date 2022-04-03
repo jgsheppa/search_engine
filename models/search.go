@@ -37,7 +37,7 @@ func CreateSuggestions(todo Todo) []redisearch.Suggestion {
 		suggestion = append(suggestion, redisearch.Suggestion{
 			Term:    word,
 			Score:   100,
-			Payload: todo.Title,
+			Payload: word,
 			Incr:    false,
 		})
 	}
@@ -48,7 +48,7 @@ func CreateSuggestions(todo Todo) []redisearch.Suggestion {
 		suggestion = append(suggestion, redisearch.Suggestion{
 			Term:    word,
 			Score:   100,
-			Payload: todo.Author,
+			Payload: word,
 			Incr:    false,
 		})
 	}

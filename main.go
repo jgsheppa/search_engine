@@ -64,6 +64,7 @@ func main() {
 	r.HandleFunc("/documents", searchController.PostDocuments).Methods("POST")
 	r.HandleFunc("/documents/{documentName}", searchController.DeleteDocument).Methods("DELETE")
 	r.HandleFunc("/search/{term}", searchController.Search).Methods("GET")
+	r.HandleFunc("/search/{term}/{sortBy}", searchController.SearchAndSort).Methods("GET")
 
 	// HandlerFunc converts notFound to the correct type
 	r.NotFoundHandler = http.HandlerFunc(NotFound)

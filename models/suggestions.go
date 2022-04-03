@@ -5,10 +5,10 @@ import (
 	"strings"
 )
 
-func CreateSuggestions(todo Todo) []redisearch.Suggestion {
+func CreateSuggestions(article Article) []redisearch.Suggestion {
 	var suggestion []redisearch.Suggestion
 
-	splitTitle := strings.Split(todo.Title, " ")
+	splitTitle := strings.Split(article.Title, " ")
 
 	for _, word := range splitTitle {
 		suggestion = append(suggestion, redisearch.Suggestion{
@@ -19,7 +19,7 @@ func CreateSuggestions(todo Todo) []redisearch.Suggestion {
 		})
 	}
 
-	splitAuthor := strings.Split(todo.Author, " ")
+	splitAuthor := strings.Split(article.Author, " ")
 
 	for _, word := range splitAuthor {
 		suggestion = append(suggestion, redisearch.Suggestion{

@@ -12,7 +12,7 @@ type RedisDB struct {
 	redisSearch redisearch.Client
 }
 
-type Todo struct {
+type Article struct {
 	Document string `json:"document"`
 	Author   string `json:"author"`
 	ID       int    `json:"id"`
@@ -25,21 +25,21 @@ type Field struct {
 	Type string `json:"type"`
 }
 
-type Todos []Todo
+type Articles []Article
 
-func CreateDocument(rs redisearch.Client, autoCompleter redisearch.Autocompleter, todos Todos) {
+func CreateDocument(rs redisearch.Client, autoCompleter redisearch.Autocompleter, articles Articles) {
 	var documents []redisearch.Document
 
-	for _, todo := range todos {
-		suggestion := CreateSuggestions(todo)
+	for _, article := range articles {
+		suggestion := CreateSuggestions(article)
 
 		autoCompleter.AddTerms(suggestion...)
 
-		doc := redisearch.NewDocument(todo.Document, 1.0)
-		doc.Set("author", todo.Author).
-			Set("id", todo.ID).
-			Set("title", todo.Title).
-			Set("url", todo.URL).
+		doc := redisearch.NewDocument(article.Document, 1.0)
+		doc.Set("author", article.Author).
+			Set("id", article.ID).
+			Set("title", article.Title).
+			Set("url", article.URL).
 			Set("date", time.Now().Unix())
 		documents = append(documents, doc)
 	}

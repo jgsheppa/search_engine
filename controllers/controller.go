@@ -13,6 +13,10 @@ import (
 	"net/http"
 )
 
+var (
+	ErrorNotFound = "No matches found"
+)
+
 func NewArticle(redisClient redis.Conn, redisSearch redisearch.Client, autoCompleter redisearch.Autocompleter) *RedisDB {
 	return &RedisDB{
 		redisClient:   redisClient,
@@ -27,12 +31,9 @@ type RedisDB struct {
 	autoCompleter redisearch.Autocompleter
 }
 
-type Todo struct {
-	Document string `json:"document"`
-	Author   string `json:"author"`
-	ID       int    `json:"id"`
-	URL      string `json:"url"`
-	Title    string `json:"title"`
+type Error struct {
+	Error string `json:"error"`
+	Code  int    `json:"code"`
 }
 
 type Field struct {
@@ -40,10 +41,8 @@ type Field struct {
 	Type string `json:"type"`
 }
 
-type Todos []Todo
-
 func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
-	var todos models.Todos
+	var articles models.Articles
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		panic(err)
@@ -51,7 +50,7 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 	if err := r.Body.Close(); err != nil {
 		panic(err)
 	}
-	if err := json.Unmarshal(body, &todos); err != nil {
+	if err := json.Unmarshal(body, &articles); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
@@ -59,11 +58,11 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	models.CreateDocument(rdb.redisSearch, rdb.autoCompleter, todos)
+	models.CreateDocument(rdb.redisSearch, rdb.autoCompleter, articles)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(todos); err != nil {
+	if err := json.NewEncoder(w).Encode(articles); err != nil {
 		panic(err)
 	}
 
@@ -141,29 +140,40 @@ func SearchAndSuggest(w http.ResponseWriter, rdb *RedisDB, term string, sortBy s
 		}
 		auto, err := rdb.autoCompleter.SuggestOpts(term, opts)
 		if err != nil {
-			panic(err)
+			fmt.Fprintln(w, "No suggestions found")
+			return
 		}
 
-		docs, total, err := rdb.redisSearch.Search(redisearch.NewQuery(auto[0].Payload).
-			Limit(0, 5).
-			Highlight(HighlightedFields, "<b>", "</b>").
-			SetSortBy(sortBy, true))
+		if len(auto) > 0 {
+			docs, total, err := rdb.redisSearch.Search(redisearch.NewQuery(auto[0].Payload).
+				Limit(0, 5).
+				Highlight(HighlightedFields, "<b>", "</b>").
+				SetSortBy(sortBy, true))
 
-		if err != nil {
-			panic(err)
+			if err != nil {
+				fmt.Fprintln(w, "No query matches these suggestions")
+				return
+			}
+
+			for _, doc := range docs {
+				response = append(response, doc.Properties)
+			}
+
+			result := SearchResponse{
+				total,
+				response,
+				auto,
+			}
+
+			err = json.NewEncoder(w).Encode(result)
+		} else {
+			error := Error{
+				ErrorNotFound,
+				404,
+			}
+			err = json.NewEncoder(w).Encode(error)
 		}
 
-		for _, doc := range docs {
-			response = append(response, doc.Properties)
-		}
-
-		result := SearchResponse{
-			total,
-			response,
-			auto,
-		}
-
-		err = json.NewEncoder(w).Encode(result)
 	} else {
 		result := SearchResponse{
 			total,
@@ -172,7 +182,6 @@ func SearchAndSuggest(w http.ResponseWriter, rdb *RedisDB, term string, sortBy s
 		}
 
 		err = json.NewEncoder(w).Encode(result)
-
 	}
 	if err != nil {
 		log.Println("failed to encode response")

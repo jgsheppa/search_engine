@@ -23,15 +23,17 @@ func CreateRouteMap() Routes {
 	}
 
 	search := Route{
-		Route:  "/search/{term}",
-		Method: "GET",
-		Note:   "Endpoint to search for articles by term or author. For this demo, try 'product', 'pro', or 'Sherif'",
+		Route:   "/search/{term}",
+		Method:  "GET",
+		Note:    "Endpoint to search for articles by term or author. This also supports autocomplete, so 'pro' will match with the first hit - in this case, 'product'.",
+		Example: "https://bp-search-engine.herokuapp.com/search/pro",
 	}
 
 	searchAndSort := Route{
-		Route:  "/search/{term}/{sortBy}",
-		Method: "GET",
-		Note:   "Similar to the search endpoint, but with the ability to sort by field. Ex: /search/engineer/author",
+		Route:   "/search/{term}/{sortBy}",
+		Method:  "GET",
+		Note:    "Similar to the search endpoint, but with the ability to sort by field.",
+		Example: "https://bp-search-engine.herokuapp.com/search/engineer/author",
 	}
 
 	postDoc := Route{

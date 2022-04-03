@@ -65,7 +65,7 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(articles); err != nil {
 		panic(err)
 	}
-
+	fmt.Fprintln(w, "Document successfully uploaded")
 }
 
 func (rdb *RedisDB) DeleteDocument(w http.ResponseWriter, r *http.Request) {
@@ -76,6 +76,22 @@ func (rdb *RedisDB) DeleteDocument(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	fmt.Fprintln(w, "Document successfully deleted")
+}
+
+func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	term := mux.Vars(r)["term"]
+	sortBy := "date"
+
+	SearchAndSuggest(w, rdb, term, sortBy)
+}
+
+func (rdb *RedisDB) SearchAndSort(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	term := mux.Vars(r)["term"]
+	sortBy := mux.Vars(r)["sortBy"]
+
+	SearchAndSuggest(w, rdb, term, sortBy)
 }
 
 type SearchResponse struct {
@@ -91,27 +107,10 @@ type SuggestOptions struct {
 	WithScores   bool
 }
 
-func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	term := mux.Vars(r)["term"]
-	sortBy := "date"
-
-	SearchAndSuggest(w, rdb, term, sortBy)
-
-}
-
-func (rdb *RedisDB) SearchAndSort(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	term := mux.Vars(r)["term"]
-	sortBy := mux.Vars(r)["sortBy"]
-
-	SearchAndSuggest(w, rdb, term, sortBy)
-
-}
-
 func SearchAndSuggest(w http.ResponseWriter, rdb *RedisDB, term string, sortBy string) {
 	var HighlightedFields []string
 	HighlightedFields = append(HighlightedFields, "title")
+	HighlightedFields = append(HighlightedFields, "author")
 
 	// Searching with limit and sorting
 	docs, total, err := rdb.redisSearch.Search(redisearch.NewQuery(term).
@@ -120,7 +119,7 @@ func SearchAndSuggest(w http.ResponseWriter, rdb *RedisDB, term string, sortBy s
 		SetSortBy(sortBy, true))
 
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 
 	var response []map[string]interface{}

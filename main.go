@@ -42,10 +42,7 @@ func main() {
 	// unless a schema is provided when creating the index
 
 	c := redisearch.NewClientFromPool(pool, "bpArticles")
-	auto := redisearch.NewAutocompleterFromPool(pool, "bpArticles")
-
-	terms := redisearch.Suggestion{Term: "prod", Score: 1, Payload: "product", Incr: true}
-	auto.AddTerms(terms)
+	autocompleter := redisearch.NewAutocompleterFromPool(pool, "bpArticles")
 	//c.Drop()
 
 	// Create a schema
@@ -62,7 +59,7 @@ func main() {
 		fmt.Println("Index already exists")
 	}
 
-	searchController := controllers.NewArticle(client, *c)
+	searchController := controllers.NewArticle(client, *c, *autocompleter)
 
 	r.HandleFunc("/documents", searchController.PostDocuments).Methods("POST")
 	r.HandleFunc("/documents/{documentName}", searchController.DeleteDocument).Methods("DELETE")

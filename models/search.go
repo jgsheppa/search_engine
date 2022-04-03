@@ -4,6 +4,7 @@ import (
 	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/gomodule/redigo/redis"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -27,10 +28,42 @@ type Field struct {
 
 type Todos []Todo
 
-func CreateDocument(rs redisearch.Client, todos Todos) {
+func CreateSuggestions(todo Todo) []redisearch.Suggestion {
+	var suggestion []redisearch.Suggestion
+
+	splitTitle := strings.Split(todo.Title, " ")
+
+	for _, word := range splitTitle {
+		suggestion = append(suggestion, redisearch.Suggestion{
+			Term:    word,
+			Score:   100,
+			Payload: todo.Title,
+			Incr:    false,
+		})
+	}
+
+	splitAuthor := strings.Split(todo.Author, " ")
+
+	for _, word := range splitAuthor {
+		suggestion = append(suggestion, redisearch.Suggestion{
+			Term:    word,
+			Score:   100,
+			Payload: todo.Author,
+			Incr:    false,
+		})
+	}
+
+	return suggestion
+}
+
+func CreateDocument(rs redisearch.Client, autoCompleter redisearch.Autocompleter, todos Todos) {
 	var documents []redisearch.Document
 
 	for _, todo := range todos {
+		suggestion := CreateSuggestions(todo)
+
+		autoCompleter.AddTerms(suggestion...)
+
 		doc := redisearch.NewDocument(todo.Document, 1.0)
 		doc.Set("author", todo.Author).
 			Set("id", todo.ID).

@@ -3,13 +3,12 @@ package main
 import (
 	"fmt"
 	"github.com/RediSearch/redisearch-go/redisearch"
+	"github.com/gorilla/mux"
 	"github.com/jgsheppa/search_engine/controllers"
 	redis_conn "github.com/jgsheppa/search_engine/redis"
 	"github.com/spf13/viper"
 	"log"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
 func NotFound(w http.ResponseWriter, r *http.Request) {
@@ -17,12 +16,11 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Route not found")
 }
 
-type App struct {
-	Router *mux.Router
-}
-
 func main() {
-	viper.SetConfigName("config")
+	config := "config"
+
+	viper.AutomaticEnv()
+	viper.SetConfigName(config)
 	viper.AddConfigPath(".")
 	err := viper.ReadInConfig()
 

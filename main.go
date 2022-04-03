@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/viper"
 	"log"
 	"net/http"
+	"os"
 )
 
 func NotFound(w http.ResponseWriter, r *http.Request) {
@@ -17,15 +18,21 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	config := "config"
 
-	viper.AutomaticEnv()
-	viper.SetConfigName(config)
-	viper.AddConfigPath(".")
-	err := viper.ReadInConfig()
+	if os.Getenv("IS_PROD") == "true" {
+		viper.AutomaticEnv()
 
-	if err != nil {
-		log.Fatalf("Error while reading config file %s", err)
+		test := os.Getenv("REDIS_ADDRESS")
+		fmt.Println("test", test)
+	} else {
+		config := "config"
+		viper.SetConfigName(config)
+		viper.AddConfigPath(".")
+		err := viper.ReadInConfig()
+
+		if err != nil {
+			log.Fatalf("Error while reading config file %s", err)
+		}
 	}
 
 	var pool = redis_conn.NewPool()
@@ -52,7 +59,7 @@ func main() {
 		AddField(redisearch.NewTextFieldOptions("url", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true}))
 
 	// Create the index with the given schema
-	err = c.CreateIndex(sc)
+	err := c.CreateIndex(sc)
 	if err != nil {
 		fmt.Println("Index already exists")
 	}

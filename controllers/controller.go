@@ -41,6 +41,16 @@ type Field struct {
 	Type string `json:"type"`
 }
 
+func DisplayAPIRoutes(w http.ResponseWriter, r *http.Request) {
+	routes := CreateRouteMap()
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if err := json.NewEncoder(w).Encode(routes); err != nil {
+		panic(err)
+	}
+}
+
 func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 	var articles models.Articles
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))

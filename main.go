@@ -18,12 +18,10 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-
+	port := "3000"
 	if os.Getenv("IS_PROD") == "true" {
 		viper.AutomaticEnv()
-
-		test := os.Getenv("REDIS_ADDRESS")
-		fmt.Println("test", test)
+		port = os.Getenv("PORT")
 	} else {
 		config := "config"
 		viper.SetConfigName(config)
@@ -38,7 +36,6 @@ func main() {
 	var pool = redis_conn.NewPool()
 
 	r := mux.NewRouter()
-	port := os.Getenv("PORT")
 
 	client := pool.Get()
 	defer client.Close()
@@ -66,8 +63,9 @@ func main() {
 
 	searchController := controllers.NewArticle(client, *c, *autocompleter)
 
+	r.HandleFunc("/", controllers.DisplayAPIRoutes).Methods("GET")
 	r.HandleFunc("/documents", searchController.PostDocuments).Methods("POST")
-	r.HandleFunc("/documents/{documentName}", searchController.DeleteDocument).Methods("DELETE")
+	r.HandleFunc("/document/delete/{documentName}", searchController.DeleteDocument).Methods("DELETE")
 	r.HandleFunc("/search/{term}", searchController.Search).Methods("GET")
 	r.HandleFunc("/search/{term}/{sortBy}", searchController.SearchAndSort).Methods("GET")
 

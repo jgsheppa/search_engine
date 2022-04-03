@@ -38,7 +38,7 @@ func main() {
 	var pool = redis_conn.NewPool()
 
 	r := mux.NewRouter()
-	port := "3000"
+	port := os.Getenv("PORT")
 
 	client := pool.Get()
 	defer client.Close()

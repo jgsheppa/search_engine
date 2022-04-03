@@ -3,10 +3,14 @@ module github.com/jgsheppa/search_engine
 go 1.17
 
 require (
-	github.com/RediSearch/redisearch-go v1.1.1 // indirect
+	github.com/RediSearch/redisearch-go v1.1.1
+	github.com/gomodule/redigo v1.8.8
+	github.com/gorilla/mux v1.8.0
+	github.com/spf13/viper v1.10.1
+)
+
+require (
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
-	github.com/gomodule/redigo v1.8.8 // indirect
-	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
@@ -15,7 +19,6 @@ require (
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/spf13/viper v1.10.1 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	golang.org/x/sys v0.0.0-20220403020550-483a9cbc67c0 // indirect
 	golang.org/x/text v0.3.7 // indirect

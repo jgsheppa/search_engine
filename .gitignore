@@ -3,6 +3,7 @@ go.sum
 
 .env
 
+#Config for redis db
 config.yaml
 
 data

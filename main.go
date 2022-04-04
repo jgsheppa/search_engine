@@ -48,12 +48,7 @@ func main() {
 	//c.Drop()
 
 	// Create a schema
-	sc := redisearch.NewSchema(redisearch.DefaultOptions).
-		AddField(redisearch.NewNumericField("date")).
-		AddField(redisearch.NewNumericField("id")).
-		AddField(redisearch.NewTextFieldOptions("author", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
-		AddField(redisearch.NewTextFieldOptions("title", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
-		AddField(redisearch.NewTextFieldOptions("url", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true}))
+	sc := CreateSchema()
 
 	// Create the index with the given schema
 	err := c.CreateIndex(sc)
@@ -74,4 +69,16 @@ func main() {
 
 	fmt.Println("Starting the development server on port" + port)
 	http.ListenAndServe(":"+port, r)
+}
+
+// CreateSchema is used to create the schema for your Redisearch documents,
+// which will allow you to add your data in the form of these documents
+func CreateSchema() *redisearch.Schema {
+	sc := redisearch.NewSchema(redisearch.DefaultOptions).
+		AddField(redisearch.NewNumericField("date")).
+		AddField(redisearch.NewNumericField("id")).
+		AddField(redisearch.NewTextFieldOptions("author", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
+		AddField(redisearch.NewTextFieldOptions("title", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
+		AddField(redisearch.NewTextFieldOptions("url", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true}))
+	return sc
 }

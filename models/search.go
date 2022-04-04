@@ -33,7 +33,10 @@ func CreateDocument(rs redisearch.Client, autoCompleter redisearch.Autocompleter
 	for _, article := range articles {
 		suggestion := CreateSuggestions(article)
 
-		autoCompleter.AddTerms(suggestion...)
+		err := autoCompleter.AddTerms(suggestion...)
+		if err != nil {
+			log.Println("Error adding term for autocomplete")
+		}
 
 		doc := redisearch.NewDocument(article.Document, 1.0)
 		doc.Set("author", article.Author).
@@ -51,6 +54,7 @@ func CreateDocument(rs redisearch.Client, autoCompleter redisearch.Autocompleter
 }
 
 func DeleteDocument(rs redisearch.Client, document string) error {
+
 	err := rs.DeleteDocument(document)
 	if err != nil {
 		return err

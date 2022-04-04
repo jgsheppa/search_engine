@@ -44,7 +44,7 @@ func main() {
 	// unless a schema is provided when creating the index
 
 	c := redisearch.NewClientFromPool(pool, "bpArticles")
-	autocompleter := redisearch.NewAutocompleterFromPool(pool, "bpArticles")
+	autocomplete := redisearch.NewAutocompleterFromPool(pool, "bpArticles")
 	//c.Drop()
 
 	// Create a schema
@@ -61,7 +61,7 @@ func main() {
 		fmt.Println("Index already exists")
 	}
 
-	searchController := controllers.NewArticle(client, *c, *autocompleter)
+	searchController := controllers.NewArticle(client, *c, *autocomplete)
 
 	r.HandleFunc("/", controllers.DisplayAPIRoutes).Methods("GET")
 	r.HandleFunc("/documents", searchController.PostDocuments).Methods("POST")

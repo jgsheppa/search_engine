@@ -5,7 +5,7 @@
     ],
     "swagger": "2.0",
     "info": {
-        "description": "This is a search engine microservice built with Redis\nwith the ability to search for article titles, authors, and topics.",
+        "description": "This is a search engine built with Redisearch",
         "title": "BestPracticer Search Engine",
         "contact": {},
         "license": {
@@ -167,6 +167,7 @@
             "type": "object",
             "properties": {
                 "author": {
+                    "description": "Author of article",
                     "type": "string"
                 },
                 "document": {
@@ -177,9 +178,11 @@
                     "type": "integer"
                 },
                 "title": {
+                    "description": "Title of article",
                     "type": "string"
                 },
                 "url": {
+                    "description": "URL of article",
                     "type": "string"
                 }
             }

@@ -3,6 +3,7 @@ definitions:
   models.Article:
     properties:
       author:
+        description: Author of article
         type: string
       document:
         description: Document name, if possible a UUID
@@ -10,16 +11,16 @@ definitions:
       id:
         type: integer
       title:
+        description: Title of article
         type: string
       url:
+        description: URL of article
         type: string
     type: object
 host: localhost:3000
 info:
   contact: {}
-  description: |-
-    This is a search engine microservice built with Redis
-    with the ability to search for article titles, authors, and topics.
+  description: This is a search engine built with Redisearch
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html

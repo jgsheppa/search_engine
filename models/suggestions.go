@@ -30,5 +30,16 @@ func CreateSuggestions(article Article) []redisearch.Suggestion {
 		})
 	}
 
+	splitTopic := strings.Split(article.Topic, " ")
+
+	for _, word := range splitTopic {
+		suggestion = append(suggestion, redisearch.Suggestion{
+			Term:    word,
+			Score:   100,
+			Payload: word,
+			Incr:    false,
+		})
+	}
+
 	return suggestion
 }

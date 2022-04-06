@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/gomodule/redigo/redis"
 	"log"
@@ -22,6 +23,8 @@ type Article struct {
 	URL string `json:"url"`
 	// Title of article
 	Title string `json:"title"`
+	// Topics of article
+	Topic string `json:"topic"`
 }
 
 type Field struct {
@@ -47,6 +50,7 @@ func CreateDocument(rs redisearch.Client, autoCompleter redisearch.Autocompleter
 			Set("id", article.ID).
 			Set("title", article.Title).
 			Set("url", article.URL).
+			Set("topic", article.Topic).
 			Set("date", time.Now().Unix())
 		documents = append(documents, doc)
 	}
@@ -55,6 +59,7 @@ func CreateDocument(rs redisearch.Client, autoCompleter redisearch.Autocompleter
 	if err := rs.Index(documents...); err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("documents", documents)
 }
 
 func DeleteDocument(rs redisearch.Client, document string) error {

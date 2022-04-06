@@ -151,6 +151,7 @@ func SearchAndSuggest(w http.ResponseWriter, rdb *RedisDB, term string, sortBy s
 	var HighlightedFields []string
 	HighlightedFields = append(HighlightedFields, "title")
 	HighlightedFields = append(HighlightedFields, "author")
+	HighlightedFields = append(HighlightedFields, "topic")
 
 	// Searching with limit and sorting
 	docs, total, err := rdb.redisSearch.Search(redisearch.NewQuery(term).

@@ -59,7 +59,7 @@ func main() {
 
 	c := redisearch.NewClientFromPool(pool, "bpArticles")
 	autocomplete := redisearch.NewAutocompleterFromPool(pool, "bpArticles")
-	//c.Drop()
+	c.Drop()
 
 	// Create a schema
 	sc := CreateSchema()
@@ -71,7 +71,7 @@ func main() {
 	}
 
 	swagger.SwaggerInfo.Title = "BestPracticer Search Engine"
-	swagger.SwaggerInfo.Description = "This is a search engine microservice built with Redis"
+	swagger.SwaggerInfo.Description = "This is a search engine built with Redisearch"
 	swagger.SwaggerInfo.Version = "1.0"
 	swagger.SwaggerInfo.Host = "localhost:3000"
 	swagger.SwaggerInfo.BasePath = "/"
@@ -107,6 +107,7 @@ func CreateSchema() *redisearch.Schema {
 		AddField(redisearch.NewNumericField("id")).
 		AddField(redisearch.NewTextFieldOptions("author", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
 		AddField(redisearch.NewTextFieldOptions("title", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
-		AddField(redisearch.NewTextFieldOptions("url", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true}))
+		AddField(redisearch.NewTextFieldOptions("url", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
+		AddField(redisearch.NewTextFieldOptions("topic", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true}))
 	return sc
 }

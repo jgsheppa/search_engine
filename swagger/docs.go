@@ -170,6 +170,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "author": {
+                    "description": "Author of article",
                     "type": "string"
                 },
                 "document": {
@@ -180,9 +181,11 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "title": {
+                    "description": "Title of article",
                     "type": "string"
                 },
                 "url": {
+                    "description": "URL of article",
                     "type": "string"
                 }
             }
@@ -197,7 +200,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/",
 	Schemes:          []string{"http", "https"},
 	Title:            "BestPracticer Search Engine",
-	Description:      "This is a search engine microservice built with Redis\nwith the ability to search for article titles, authors, and topics.",
+	Description:      "This is a search engine built with Redisearch",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

@@ -1,0 +1,30 @@
+# syntax=docker/dockerfile:1
+
+FROM golang:1.18.0-buster
+
+WORKDIR /app
+
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
+
+COPY . ./
+
+RUN go build -o /docker-build
+
+CMD [ "/docker-build" ]
+
+##
+## Deploy
+##
+FROM gcr.io/distroless/base-debian10
+
+WORKDIR /
+
+COPY --from=build /docker-build /docker-build
+
+EXPOSE 8080
+
+USER nonroot:nonroot
+
+ENTRYPOINT ["/docker-build"]

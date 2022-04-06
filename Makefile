@@ -13,3 +13,6 @@ heroku-push:
 
 heroku-release:
 	heroku container:release web --app bp-search-engine
+
+swagger:
+	swag init -g ./main.go -o ./swagger

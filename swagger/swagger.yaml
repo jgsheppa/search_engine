@@ -1,0 +1,126 @@
+basePath: /
+definitions:
+  models.Article:
+    properties:
+      author:
+        type: string
+      document:
+        description: Document name, if possible a UUID
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      url:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: |-
+    This is a search engine microservice built with Redis
+    with the ability to search for article titles, authors, and topics.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: BestPracticer Search Engine
+  version: "1.0"
+paths:
+  /api/document/delete/{documentName}:
+    delete:
+      operationId: documentName
+      parameters:
+      - description: search term
+        in: path
+        name: documentName
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Ok
+          schema:
+            type: string
+      summary: Delete documents from Redisearch
+      tags:
+      - Document
+  /api/documents:
+    post:
+      parameters:
+      - description: The body to create a Redis document for an article
+        in: body
+        name: Body
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Article'
+          type: array
+      responses:
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/models.Article'
+            type: array
+        "422":
+          description: ""
+      summary: Post documents to Redisearch
+      tags:
+      - Document
+  /api/search/{term}:
+    get:
+      operationId: term
+      parameters:
+      - description: search term
+        in: path
+        name: term
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Ok
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Server Error
+          schema:
+            type: string
+      summary: Search Redisearch documents
+      tags:
+      - Search
+  /api/search/{term}/{sortBy}:
+    get:
+      parameters:
+      - description: search term
+        in: path
+        name: term
+        required: true
+        type: string
+      - description: sort by
+        in: path
+        name: sortBy
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Ok
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Server Error
+          schema:
+            type: string
+      summary: Search and sort Redisearch documents
+      tags:
+      - Search
+schemes:
+- http
+- https
+swagger: "2.0"

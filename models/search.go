@@ -13,6 +13,7 @@ type RedisDB struct {
 }
 
 type Article struct {
+	// Document name, if possible a UUID
 	Document string `json:"document"`
 	Author   string `json:"author"`
 	ID       int    `json:"id"`

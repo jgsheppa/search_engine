@@ -26,31 +26,35 @@ func NewArticle(redisClient redis.Conn, redisSearch redisearch.Client, autoCompl
 }
 
 type RedisDB struct {
-	redisClient   redis.Conn
-	redisSearch   redisearch.Client
+	// Redis client
+	redisClient redis.Conn
+	// Redisearch client
+	redisSearch redisearch.Client
+	// Redis autocomplete
 	autoCompleter redisearch.Autocompleter
-}
+} // @name RedisDB
 
 type Error struct {
+	// Error Message
 	Error string `json:"error"`
-	Code  int    `json:"code"`
-}
+	// Error Code
+	Code int `json:"code"`
+} // @name Error
 
 type Field struct {
+	// Field name
 	Name string `json:"name"`
+	// Field type
 	Type string `json:"type"`
-}
+} // @name Field
 
-func DisplayAPIRoutes(w http.ResponseWriter, r *http.Request) {
-	routes := CreateRouteMap()
-
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if err := json.NewEncoder(w).Encode(routes); err != nil {
-		panic(err)
-	}
-}
-
+// PostDocuments godoc
+// @Summary Post documents to Redisearch
+// @Tags Document
+// @Param Body body models.Articles true "The body to create a Redis document for an article"
+// @Success 201 {object} models.Articles
+// @Failure 422
+// @Router /api/documents [post]
 func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 	var articles models.Articles
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
@@ -78,6 +82,13 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Document successfully uploaded")
 }
 
+// DeleteDocument godoc
+// @Summary Delete documents from Redisearch
+// @Tags Document
+// @Param documentName path string true "search term"
+// @ID documentName
+// @Success 200 {string} string "Ok"
+// @Router /api/document/delete/{documentName} [delete]
 func (rdb *RedisDB) DeleteDocument(w http.ResponseWriter, r *http.Request) {
 	term := mux.Vars(r)["documentName"]
 
@@ -85,9 +96,19 @@ func (rdb *RedisDB) DeleteDocument(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Fprintln(w, "Document successfully deleted")
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintln(w, http.StatusOK, "Document successfully deleted")
 }
 
+// Search godoc
+// @Summary Search Redisearch documents
+// @Tags Search
+// @ID term
+// @Param term path string true "search term"
+// @Success 200 {string} string "Ok"
+// @Failure 404 {string} string "Not Found"
+// @Failure 500 {string} string "Server Error"
+// @Router /api/search/{term} [get]
 func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	term := mux.Vars(r)["term"]
@@ -96,6 +117,15 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 	SearchAndSuggest(w, rdb, term, sortBy)
 }
 
+// SearchAndSort godoc
+// @Summary Search and sort Redisearch documents
+// @Tags Search
+// @Param term path string true "search term"
+// @Param sortBy path string true "sort by"
+// @Success 200 {string} string "Ok"
+// @Failure 404 {string} string "Not Found"
+// @Failure 500 {string} string "Server Error"
+// @Router /api/search/{term}/{sortBy} [get]
 func (rdb *RedisDB) SearchAndSort(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	term := mux.Vars(r)["term"]
@@ -149,7 +179,8 @@ func SearchAndSuggest(w http.ResponseWriter, rdb *RedisDB, term string, sortBy s
 		}
 		auto, err := rdb.autoCompleter.SuggestOpts(term, opts)
 		if err != nil {
-			fmt.Fprintln(w, "No suggestions found")
+			w.WriteHeader(http.StatusNotFound)
+			fmt.Fprintln(w, http.StatusNotFound, "No suggestions found")
 			return
 		}
 
@@ -160,7 +191,8 @@ func SearchAndSuggest(w http.ResponseWriter, rdb *RedisDB, term string, sortBy s
 				SetSortBy(sortBy, true))
 
 			if err != nil {
-				fmt.Fprintln(w, "No query matches these suggestions")
+				w.WriteHeader(http.StatusNotFound)
+				fmt.Fprintln(w, http.StatusNotFound, "No query matches these suggestions")
 				return
 			}
 

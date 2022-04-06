@@ -1,0 +1,188 @@
+{
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a search engine microservice built with Redis\nwith the ability to search for article titles, authors, and topics.",
+        "title": "BestPracticer Search Engine",
+        "contact": {},
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:3000",
+    "basePath": "/",
+    "paths": {
+        "/api/document/delete/{documentName}": {
+            "delete": {
+                "tags": [
+                    "Document"
+                ],
+                "summary": "Delete documents from Redisearch",
+                "operationId": "documentName",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "search term",
+                        "name": "documentName",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/documents": {
+            "post": {
+                "tags": [
+                    "Document"
+                ],
+                "summary": "Post documents to Redisearch",
+                "parameters": [
+                    {
+                        "description": "The body to create a Redis document for an article",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Article"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Article"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/api/search/{term}": {
+            "get": {
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Search Redisearch documents",
+                "operationId": "term",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "search term",
+                        "name": "term",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/search/{term}/{sortBy}": {
+            "get": {
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Search and sort Redisearch documents",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "search term",
+                        "name": "term",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort by",
+                        "name": "sortBy",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Article": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "document": {
+                    "description": "Document name, if possible a UUID",
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

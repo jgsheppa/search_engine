@@ -8,3 +8,5 @@ heroku-push:
 
 heroku-release:
 	heroku container:release web --app bp-search-engine
+test:
+	go test -v ./...

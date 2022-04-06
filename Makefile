@@ -5,7 +5,7 @@ build:
 test:
 	go test -v ./...
 
-login:
+heroku-login:
 	heroku container:login
 	
 heroku-push:

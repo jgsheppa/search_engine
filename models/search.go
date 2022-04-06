@@ -15,10 +15,13 @@ type RedisDB struct {
 type Article struct {
 	// Document name, if possible a UUID
 	Document string `json:"document"`
-	Author   string `json:"author"`
-	ID       int    `json:"id"`
-	URL      string `json:"url"`
-	Title    string `json:"title"`
+	// Author of article
+	Author string `json:"author"`
+	ID     int    `json:"id"`
+	// URL of article
+	URL string `json:"url"`
+	// Title of article
+	Title string `json:"title"`
 }
 
 type Field struct {

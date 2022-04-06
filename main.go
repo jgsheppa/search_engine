@@ -59,7 +59,7 @@ func main() {
 
 	c := redisearch.NewClientFromPool(pool, "bpArticles")
 	autocomplete := redisearch.NewAutocompleterFromPool(pool, "bpArticles")
-	c.Drop()
+	//c.Drop()
 
 	// Create a schema
 	sc := CreateSchema()

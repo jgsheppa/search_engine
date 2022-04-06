@@ -7,3 +7,6 @@ vendor
 config.yaml
 
 data
+
+# Go binary
+search_engine

@@ -13,6 +13,9 @@ definitions:
       title:
         description: Title of article
         type: string
+      topic:
+        description: Topics of article
+        type: string
       url:
         description: URL of article
         type: string
@@ -67,6 +70,26 @@ paths:
       summary: Post documents to Redisearch
       tags:
       - Document
+  /api/index/create/:
+    post:
+      responses:
+        "200":
+          description: Ok
+          schema:
+            type: string
+      summary: Delete all documents from Redisearch
+      tags:
+      - Index
+  /api/index/delete/:
+    delete:
+      responses:
+        "200":
+          description: Ok
+          schema:
+            type: string
+      summary: Delete all documents from Redisearch
+      tags:
+      - Index
   /api/search/{term}:
     get:
       operationId: term

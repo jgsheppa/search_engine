@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/gorilla/mux"
 	"github.com/jgsheppa/search_engine/controllers"
+	"github.com/jgsheppa/search_engine/models"
 	redis_conn "github.com/jgsheppa/search_engine/redis"
 	"github.com/jgsheppa/search_engine/swagger"
 	"github.com/spf13/viper"
@@ -54,20 +54,9 @@ func main() {
 	client := pool.Get()
 	defer client.Close()
 
-	// Create a client. By default a client is schemaless
-	// unless a schema is provided when creating the index
-
-	c := redisearch.NewClientFromPool(pool, "bpArticles")
-	autocomplete := redisearch.NewAutocompleterFromPool(pool, "bpArticles")
-	//c.Drop()
-
-	// Create a schema
-	sc := CreateSchema()
-
-	// Create the index with the given schema
-	err := c.CreateIndex(sc)
+	c, autocomplete, err := models.CreateIndex(pool)
 	if err != nil {
-		fmt.Println("Index already exists")
+		log.Println(err)
 	}
 
 	swagger.SwaggerInfo.Title = "BestPracticer Search Engine"
@@ -77,14 +66,19 @@ func main() {
 	swagger.SwaggerInfo.BasePath = "/"
 	swagger.SwaggerInfo.Schemes = []string{"http", "https"}
 
-	searchController := controllers.NewArticle(client, *c, *autocomplete)
+	searchController := controllers.NewArticle(*pool, *c, *autocomplete)
 
+	// Swagger routes
 	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
-	//r.HandleFunc("swagger/*any", swaggerFiles.handler)
 	r.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger", http.FileServer(http.Dir("swagger"))))
 	r.HandleFunc("/", controllers.DisplayAPIRoutes).Methods("GET")
+	// Document routes
 	r.HandleFunc("/api/documents", searchController.PostDocuments).Methods("POST")
 	r.HandleFunc("/api/document/delete/{documentName}", searchController.DeleteDocument).Methods("DELETE")
+	// Index routes
+	r.HandleFunc("/api/index/delete/", searchController.DropIndex).Methods("DELETE")
+	r.HandleFunc("/api/index/create/", searchController.CreateIndex).Methods("POST")
+	// Search routes
 	r.HandleFunc("/api/search/{term}", searchController.Search).Methods("GET")
 	r.HandleFunc("/api/search/{term}/{sortBy}", searchController.SearchAndSort).Methods("GET")
 
@@ -97,17 +91,4 @@ func main() {
 		panic(err)
 	}
 
-}
-
-// CreateSchema is used to create the schema for your Redisearch documents,
-// which will allow you to add your data in the form of these documents
-func CreateSchema() *redisearch.Schema {
-	sc := redisearch.NewSchema(redisearch.DefaultOptions).
-		AddField(redisearch.NewNumericField("date")).
-		AddField(redisearch.NewNumericField("id")).
-		AddField(redisearch.NewTextFieldOptions("author", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
-		AddField(redisearch.NewTextFieldOptions("title", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
-		AddField(redisearch.NewTextFieldOptions("url", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
-		AddField(redisearch.NewTextFieldOptions("topic", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true}))
-	return sc
 }

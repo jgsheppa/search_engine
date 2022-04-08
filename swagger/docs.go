@@ -82,6 +82,38 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/index/create/": {
+            "post": {
+                "tags": [
+                    "Index"
+                ],
+                "summary": "Delete all documents from Redisearch",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/index/delete/": {
+            "delete": {
+                "tags": [
+                    "Index"
+                ],
+                "summary": "Delete all documents from Redisearch",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/search/{term}": {
             "get": {
                 "tags": [
@@ -182,6 +214,10 @@ const docTemplate = `{
                 },
                 "title": {
                     "description": "Title of article",
+                    "type": "string"
+                },
+                "topic": {
+                    "description": "Topics of article",
                     "type": "string"
                 },
                 "url": {

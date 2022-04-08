@@ -1,15 +1,12 @@
 package models
 
 import (
-	"fmt"
 	"github.com/RediSearch/redisearch-go/redisearch"
-	"github.com/gomodule/redigo/redis"
 	"log"
 	"time"
 )
 
 type RedisDB struct {
-	redisClient redis.Conn
 	redisSearch redisearch.Client
 }
 
@@ -59,7 +56,6 @@ func CreateDocument(rs redisearch.Client, autoCompleter redisearch.Autocompleter
 	if err := rs.Index(documents...); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("documents", documents)
 }
 
 func DeleteDocument(rs redisearch.Client, document string) error {

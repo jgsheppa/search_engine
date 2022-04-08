@@ -34,7 +34,7 @@ func SuggestionFactory(wordArray []string) []redisearch.Suggestion {
 		if index == wordArrayLength {
 			return suggestion
 		}
-		stringPortion := strings.Join(wordArray[0:stopSlice], " ")
+		stringPortion := strings.Join(wordArray[:stopSlice], " ")
 
 		suggestion = append(suggestion, redisearch.Suggestion{
 			Term:    stringPortion,

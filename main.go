@@ -33,9 +33,11 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 // @schemes http https
 func main() {
 	port := "3000"
+	baseUrl := "localhost:3000"
 	if os.Getenv("IS_PROD") == "true" {
 		viper.AutomaticEnv()
 		port = os.Getenv("PORT")
+		baseUrl := os.Getenv("BASE_URL")
 	} else {
 		config := "config"
 		viper.SetConfigName(config)
@@ -62,7 +64,7 @@ func main() {
 	swagger.SwaggerInfo.Title = "BestPracticer Search Engine"
 	swagger.SwaggerInfo.Description = "This is a search engine built with Redisearch"
 	swagger.SwaggerInfo.Version = "1.0"
-	swagger.SwaggerInfo.Host = "localhost:3000"
+	swagger.SwaggerInfo.Host = baseUrl
 	swagger.SwaggerInfo.BasePath = "/"
 	swagger.SwaggerInfo.Schemes = []string{"http", "https"}
 

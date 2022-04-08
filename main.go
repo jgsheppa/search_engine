@@ -37,7 +37,7 @@ func main() {
 	if os.Getenv("IS_PROD") == "true" {
 		viper.AutomaticEnv()
 		port = os.Getenv("PORT")
-		baseUrl := os.Getenv("BASE_URL")
+		baseUrl = os.Getenv("BASE_URL")
 	} else {
 		config := "config"
 		viper.SetConfigName(config)

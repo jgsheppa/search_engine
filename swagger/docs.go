@@ -116,6 +116,9 @@ const docTemplate = `{
         },
         "/api/search/{term}": {
             "get": {
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "Search"
                 ],
@@ -134,7 +137,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Ok",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/controllers.SwaggerSearchResponse"
                         }
                     },
                     "404": {
@@ -154,6 +157,9 @@ const docTemplate = `{
         },
         "/api/search/{term}/{sortBy}": {
             "get": {
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "Search"
                 ],
@@ -178,7 +184,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Ok",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/controllers.SwaggerSearchResponse"
                         }
                     },
                     "404": {
@@ -198,6 +204,77 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controllers.SwaggerSearchResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/controllers.swaggerResponse"
+                    }
+                },
+                "suggestion": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/controllers.swaggerSuggestion"
+                    }
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "controllers.swaggerResponse": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "description": "Author of article",
+                    "type": "string",
+                    "example": "Anne Applebaum"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "title": {
+                    "description": "Title of article",
+                    "type": "string",
+                    "example": "How to be awesome"
+                },
+                "topic": {
+                    "description": "Topics of article",
+                    "type": "string",
+                    "example": "Awesome Stuff"
+                },
+                "url": {
+                    "description": "URL of article",
+                    "type": "string",
+                    "example": "www.bestpractice.com/awesome-article"
+                }
+            }
+        },
+        "controllers.swaggerSuggestion": {
+            "type": "object",
+            "properties": {
+                "incr": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "payload": {
+                    "type": "string",
+                    "example": "Pair"
+                },
+                "score": {
+                    "type": "number",
+                    "example": 70.7
+                },
+                "term": {
+                    "type": "string",
+                    "example": "Pair"
+                }
+            }
+        },
         "models.Article": {
             "type": "object",
             "properties": {

@@ -1,5 +1,56 @@
 basePath: /
 definitions:
+  controllers.SwaggerSearchResponse:
+    properties:
+      response:
+        items:
+          $ref: '#/definitions/controllers.swaggerResponse'
+        type: array
+      suggestion:
+        items:
+          $ref: '#/definitions/controllers.swaggerSuggestion'
+        type: array
+      total:
+        example: 1
+        type: integer
+    type: object
+  controllers.swaggerResponse:
+    properties:
+      author:
+        description: Author of article
+        example: Anne Applebaum
+        type: string
+      id:
+        example: 1
+        type: integer
+      title:
+        description: Title of article
+        example: How to be awesome
+        type: string
+      topic:
+        description: Topics of article
+        example: Awesome Stuff
+        type: string
+      url:
+        description: URL of article
+        example: www.bestpractice.com/awesome-article
+        type: string
+    type: object
+  controllers.swaggerSuggestion:
+    properties:
+      incr:
+        example: false
+        type: boolean
+      payload:
+        example: Pair
+        type: string
+      score:
+        example: 70.7
+        type: number
+      term:
+        example: Pair
+        type: string
+    type: object
   models.Article:
     properties:
       author:
@@ -99,11 +150,13 @@ paths:
         name: term
         required: true
         type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: Ok
           schema:
-            type: string
+            $ref: '#/definitions/controllers.SwaggerSearchResponse'
         "404":
           description: Not Found
           schema:
@@ -128,11 +181,13 @@ paths:
         name: sortBy
         required: true
         type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: Ok
           schema:
-            type: string
+            $ref: '#/definitions/controllers.SwaggerSearchResponse'
         "404":
           description: Not Found
           schema:

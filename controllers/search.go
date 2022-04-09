@@ -15,6 +15,31 @@ type SearchResponse struct {
 	Suggestion []redisearch.Suggestion  `json:"suggestion"`
 }
 
+type swaggerResponse struct {
+	// Author of article
+	Author string `json:"author" example:"Anne Applebaum"`
+	ID     int    `json:"id" example:"1"`
+	// URL of article
+	URL string `json:"url" example:"www.bestpractice.com/awesome-article"`
+	// Title of article
+	Title string `json:"title" example:"How to be awesome"`
+	// Topics of article
+	Topic string `json:"topic" example:"Awesome Stuff"`
+}
+
+type swaggerSuggestion struct {
+	Term    string  `json:"term" example:"Pair"`
+	Score   float64 `json:"score" example:"70.70"`
+	Payload string  `json:"payload" example:"Pair"`
+	Incr    bool    `json:"incr" example:"false"`
+}
+
+type SwaggerSearchResponse struct {
+	Suggestion []swaggerSuggestion `json:"suggestion"`
+	Response   []swaggerResponse   `json:"response"`
+	Total      int                 `json:"total" example:"1"`
+}
+
 type SuggestOptions struct {
 	Num          int
 	Fuzzy        bool
@@ -27,7 +52,8 @@ type SuggestOptions struct {
 // @Tags Search
 // @ID term
 // @Param term path string true "search term"
-// @Success 200 {string} string "Ok"
+// @Produce json
+// @Success 200 {object} SwaggerSearchResponse "Ok"
 // @Failure 404 {string} string "Not Found"
 // @Failure 500 {string} string "Server Error"
 // @Router /api/search/{term} [get]
@@ -44,9 +70,11 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 // @Tags Search
 // @Param term path string true "search term"
 // @Param sortBy path string true "sort by"
-// @Success 200 {string} string "Ok"
-// @Failure 404 {string} string "Not Found"
-// @Failure 500 {string} string "Server Error"
+// @produce json
+// @Success 200 {object} SwaggerSearchResponse "Ok"
+// @Response 200 {object} SwaggerSearchResponse "Ok"
+// @Failure 404 {string} Not Found "Not Found"
+// @Failure 500 {string} Server Error "Server Error"
 // @Router /api/search/{term}/{sortBy} [get]
 func (rdb *RedisDB) SearchAndSort(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
@@ -57,10 +85,7 @@ func (rdb *RedisDB) SearchAndSort(w http.ResponseWriter, r *http.Request) {
 }
 
 func SearchAndSuggest(w http.ResponseWriter, rdb *RedisDB, term string, sortBy string) {
-	var HighlightedFields []string
-	HighlightedFields = append(HighlightedFields, "title")
-	HighlightedFields = append(HighlightedFields, "author")
-	HighlightedFields = append(HighlightedFields, "topic")
+	var HighlightedFields = []string{"title", "author", "topic"}
 
 	// Searching with limit and sorting
 	docs, total, err := rdb.redisSearch.Search(redisearch.NewQuery(term).

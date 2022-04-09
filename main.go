@@ -34,10 +34,12 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 func main() {
 	port := "3000"
 	baseUrl := "localhost:3000"
+	httpProtocol := "http"
 	if os.Getenv("IS_PROD") == "true" {
 		viper.AutomaticEnv()
 		port = os.Getenv("PORT")
 		baseUrl = os.Getenv("BASE_URL")
+		httpProtocol = "https"
 	} else {
 		config := "config"
 		viper.SetConfigName(config)
@@ -66,7 +68,7 @@ func main() {
 	swagger.SwaggerInfo.Version = "1.0"
 	swagger.SwaggerInfo.Host = baseUrl
 	swagger.SwaggerInfo.BasePath = "/"
-	swagger.SwaggerInfo.Schemes = []string{"https"}
+	swagger.SwaggerInfo.Schemes = []string{httpProtocol}
 
 	searchController := controllers.NewArticle(*pool, *c, *autocomplete)
 

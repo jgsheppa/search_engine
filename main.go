@@ -27,28 +27,9 @@ import (
 // @query.collection.format multi
 // @schemes http https
 func main() {
-	port := "3000"
-	baseUrl := "localhost:3000"
-	httpProtocol := "http"
-	if os.Getenv("IS_PROD") == "true" {
-		viper.AutomaticEnv()
-		port = os.Getenv("PORT")
-		baseUrl = os.Getenv("BASE_URL")
-		httpProtocol = "https"
-	} else {
-		config := "config"
-		viper.SetConfigName(config)
-		viper.AddConfigPath(".")
-		err := viper.ReadInConfig()
-
-		if err != nil {
-			log.Fatalf("Error while reading config file %s", err)
-		}
-	}
+	port, baseUrl, httpProtocol := SetupConfig()
 
 	var pool = redis_conn.NewPool()
-
-	r := mux.NewRouter()
 
 	client := pool.Get()
 	defer client.Close()
@@ -65,6 +46,7 @@ func main() {
 	swagger.SwaggerInfo.BasePath = "/"
 	swagger.SwaggerInfo.Schemes = []string{httpProtocol}
 
+	r := mux.NewRouter()
 	searchController := controllers.NewArticle(*pool, *c, *autocomplete)
 
 	// Swagger routes
@@ -112,4 +94,27 @@ func main() {
 		log.Fatal(err)
 	}
 
+}
+
+func SetupConfig() (portNum, baseURL, http string) {
+	port := "3000"
+	baseUrl := "localhost:3000"
+	httpProtocol := "http"
+
+	if os.Getenv("IS_PROD") == "true" {
+		viper.AutomaticEnv()
+		port = os.Getenv("PORT")
+		baseUrl = os.Getenv("BASE_URL")
+		httpProtocol = "https"
+		return port, baseUrl, httpProtocol
+	}
+	config := "config"
+	viper.SetConfigName(config)
+	viper.AddConfigPath(".")
+	err := viper.ReadInConfig()
+
+	if err != nil {
+		log.Fatalf("Error while reading config file %s", err)
+	}
+	return port, baseUrl, httpProtocol
 }

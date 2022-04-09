@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  controllers.ApiError:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    type: object
   controllers.SwaggerSearchResponse:
     properties:
       response:
@@ -18,7 +25,7 @@ definitions:
     properties:
       author:
         description: Author of article
-        example: Anne Applebaum
+        example: Alex Appleton
         type: string
       id:
         example: 1
@@ -33,7 +40,7 @@ definitions:
         type: string
       url:
         description: URL of article
-        example: www.bestpractice.com/awesome-article
+        example: www.bestpracticer.com/awesome-article
         type: string
     type: object
   controllers.swaggerSuggestion:
@@ -154,10 +161,10 @@ paths:
         in: query
         name: sort
         type: string
-      - description: 'Accepted terms: true, false'
+      - description: Ascending?
         in: query
         name: ascending
-        type: string
+        type: boolean
       - description: Limit number of results
         in: query
         name: limit
@@ -172,11 +179,11 @@ paths:
         "404":
           description: Not Found
           schema:
-            type: string
+            $ref: '#/definitions/controllers.ApiError'
         "500":
           description: Server Error
           schema:
-            type: string
+            $ref: '#/definitions/controllers.ApiError'
       summary: Search Redisearch documents
       tags:
       - Search

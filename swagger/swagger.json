@@ -136,8 +136,8 @@
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "Accepted terms: true, false",
+                        "type": "boolean",
+                        "description": "Ascending?",
                         "name": "ascending",
                         "in": "query"
                     },
@@ -158,13 +158,13 @@
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/controllers.ApiError"
                         }
                     },
                     "500": {
                         "description": "Server Error",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/controllers.ApiError"
                         }
                     }
                 }
@@ -172,6 +172,17 @@
         }
     },
     "definitions": {
+        "controllers.ApiError": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "controllers.SwaggerSearchResponse": {
             "type": "object",
             "properties": {
@@ -199,7 +210,7 @@
                 "author": {
                     "description": "Author of article",
                     "type": "string",
-                    "example": "Anne Applebaum"
+                    "example": "Alex Appleton"
                 },
                 "id": {
                     "type": "integer",
@@ -218,7 +229,7 @@
                 "url": {
                     "description": "URL of article",
                     "type": "string",
-                    "example": "www.bestpractice.com/awesome-article"
+                    "example": "www.bestpracticer.com/awesome-article"
                 }
             }
         },

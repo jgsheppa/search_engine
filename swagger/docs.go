@@ -139,8 +139,8 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "Accepted terms: true, false",
+                        "type": "boolean",
+                        "description": "Ascending?",
                         "name": "ascending",
                         "in": "query"
                     },
@@ -161,13 +161,13 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/controllers.ApiError"
                         }
                     },
                     "500": {
                         "description": "Server Error",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/controllers.ApiError"
                         }
                     }
                 }
@@ -175,6 +175,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controllers.ApiError": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
         "controllers.SwaggerSearchResponse": {
             "type": "object",
             "properties": {
@@ -202,7 +213,7 @@ const docTemplate = `{
                 "author": {
                     "description": "Author of article",
                     "type": "string",
-                    "example": "Anne Applebaum"
+                    "example": "Alex Appleton"
                 },
                 "id": {
                     "type": "integer",
@@ -221,7 +232,7 @@ const docTemplate = `{
                 "url": {
                     "description": "URL of article",
                     "type": "string",
-                    "example": "www.bestpractice.com/awesome-article"
+                    "example": "www.bestpracticer.com/awesome-article"
                 }
             }
         },

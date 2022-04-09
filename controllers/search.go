@@ -17,10 +17,10 @@ type SearchResponse struct {
 
 type swaggerResponse struct {
 	// Author of article
-	Author string `json:"author" example:"Anne Applebaum"`
+	Author string `json:"author" example:"Alex Appleton"`
 	ID     int    `json:"id" example:"1"`
 	// URL of article
-	URL string `json:"url" example:"www.bestpractice.com/awesome-article"`
+	URL string `json:"url" example:"www.bestpracticer.com/awesome-article"`
 	// Title of article
 	Title string `json:"title" example:"How to be awesome"`
 	// Topics of article
@@ -53,12 +53,12 @@ type SuggestOptions struct {
 // @ID term
 // @Param term path string true "Search by keyword"
 // @Param sort query string false "Sort by field"
-// @Param ascending query string false "Accepted terms: true, false"
+// @Param ascending query boolean false "Ascending?"
 // @Param limit query int false "Limit number of results"
 // @Produce json
 // @Success 200 {object} SwaggerSearchResponse "Ok"
-// @Failure 404 {string} string "Not Found"
-// @Failure 500 {string} string "Server Error"
+// @Failure 404 {object} ApiError "Not Found"
+// @Failure 500 {object} ApiError "Server Error"
 // @Router /api/search/{term} [get]
 func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)

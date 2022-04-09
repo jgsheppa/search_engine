@@ -14,7 +14,7 @@ import (
 func (rdb *RedisDB) DropIndex(w http.ResponseWriter, r *http.Request) {
 	err := rdb.redisSearch.Drop()
 	if err != nil {
-		http.Error(w, string(models.ErrDeleteIndex), http.StatusNotFound)
+		http.Error(w, "Cannot drop index - it does not exist", http.StatusNotFound)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
@@ -30,7 +30,7 @@ func (rdb *RedisDB) CreateIndex(w http.ResponseWriter, r *http.Request) {
 	pool := rdb.Pool
 	_, _, err := models.CreateIndex(&pool)
 	if err != nil {
-		http.Error(w, string(models.ErrCreateIndex), http.StatusNotFound)
+		http.Error(w, "Index already exists", http.StatusNotFound)
 		return
 	}
 	w.WriteHeader(http.StatusOK)

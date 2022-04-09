@@ -23,7 +23,7 @@ func NewPool() *redis.Pool {
 
 				redis.DialPassword(password))
 			if err != nil {
-				panic(err.Error())
+				log.Println(err)
 			}
 			return c, err
 		},

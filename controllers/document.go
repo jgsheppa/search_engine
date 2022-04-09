@@ -12,10 +12,6 @@ import (
 	"net/http"
 )
 
-var (
-	ErrorNotFound = "No matches found"
-)
-
 func NewArticle(pool redis.Pool, redisSearch redisearch.Client, autoCompleter redisearch.Autocompleter) *RedisDB {
 	return &RedisDB{
 		Pool:          pool,
@@ -31,13 +27,6 @@ type RedisDB struct {
 	// Redis autocomplete
 	autoCompleter redisearch.Autocompleter
 } // @name RedisDB
-
-type Error struct {
-	// Error Message
-	Error string `json:"error"`
-	// Error Code
-	Code int `json:"code"`
-} // @name Error
 
 type Field struct {
 	// Field name
@@ -57,16 +46,17 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 	var articles models.Articles
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
-		panic(err)
+		json.NewEncoder(w).Encode(largePayloadError)
+
 	}
 	if err := r.Body.Close(); err != nil {
-		panic(err)
+		json.NewEncoder(w).Encode(serverError)
 	}
 	if err := json.Unmarshal(body, &articles); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+		if err := json.NewEncoder(w).Encode(validationError); err != nil {
+			fmt.Fprintln(w, validationError.Description)
 		}
 	}
 
@@ -75,7 +65,7 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(articles); err != nil {
-		panic(err)
+		json.NewEncoder(w).Encode(validationError)
 	}
 	fmt.Fprintln(w, "Document successfully uploaded")
 }
@@ -92,7 +82,7 @@ func (rdb *RedisDB) DeleteDocument(w http.ResponseWriter, r *http.Request) {
 
 	err := models.DeleteDocument(rdb.redisSearch, term)
 	if err != nil {
-		panic(err)
+		json.NewEncoder(w).Encode(validationError)
 	}
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintln(w, http.StatusOK, "Document successfully deleted")

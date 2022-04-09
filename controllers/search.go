@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/gorilla/mux"
 	"log"
@@ -72,7 +71,7 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 	if len(limit) > 0 {
 		limitAsInt, err := strconv.Atoi(limit)
 		if err != nil {
-			fmt.Fprintln(w, "Error with limit query")
+			err = json.NewEncoder(w).Encode(validationError)
 		}
 		queryLimit = limitAsInt
 	}
@@ -121,19 +120,19 @@ func SearchAndSuggest(w http.ResponseWriter, rdb *RedisDB, order bool, limit int
 		auto, err := rdb.autoCompleter.SuggestOpts(term, opts)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
-			fmt.Fprintln(w, http.StatusNotFound, "No suggestions found")
+			err = json.NewEncoder(w).Encode(notFoundError)
 			return
 		}
 
 		if len(auto) > 0 {
 			docs, total, err := rdb.redisSearch.Search(redisearch.NewQuery(auto[0].Payload).
-				Limit(0, 5).
+				Limit(0, limit).
 				Highlight(HighlightedFields, "<b>", "</b>").
-				SetSortBy(sortBy, true))
+				SetSortBy(sortBy, order))
 
 			if err != nil {
 				w.WriteHeader(http.StatusNotFound)
-				fmt.Fprintln(w, http.StatusNotFound, "No query matches these suggestions")
+				err = json.NewEncoder(w).Encode(notFoundError)
 				return
 			}
 
@@ -149,11 +148,7 @@ func SearchAndSuggest(w http.ResponseWriter, rdb *RedisDB, order bool, limit int
 
 			err = json.NewEncoder(w).Encode(result)
 		} else {
-			error := Error{
-				ErrorNotFound,
-				404,
-			}
-			err = json.NewEncoder(w).Encode(error)
+			err = json.NewEncoder(w).Encode(notFoundError)
 		}
 
 	} else {

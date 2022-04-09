@@ -15,11 +15,6 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
-func NotFound(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotFound)
-	fmt.Fprintf(w, "Route not found")
-}
-
 // @title BestPracticer Search Engine
 // @version 1.0
 // @description This is a search engine built with Redisearch
@@ -109,12 +104,12 @@ func main() {
 		Methods("GET")
 
 	// HandlerFunc converts notFound to the correct type
-	r.NotFoundHandler = http.HandlerFunc(NotFound)
+	r.NotFoundHandler = http.HandlerFunc(controllers.NotFound)
 
 	fmt.Println("Starting the development server on port " + port)
 	err = http.ListenAndServe(":"+port, r)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 }

@@ -43,14 +43,16 @@ func SuggestionFactory(wordArray []string) []redisearch.Suggestion {
 			Incr:    false,
 		})
 
-		stringPortion = strings.Join(wordArray[index:stopSlice], " ")
+		if index > 0 {
+			stringPortion = strings.Join(wordArray[index:stopSlice], " ")
 
-		suggestion = append(suggestion, redisearch.Suggestion{
-			Term:    stringPortion,
-			Score:   100,
-			Payload: stringPortion,
-			Incr:    false,
-		})
+			suggestion = append(suggestion, redisearch.Suggestion{
+				Term:    stringPortion,
+				Score:   100,
+				Payload: stringPortion,
+				Incr:    false,
+			})
+		}
 
 		suggestion = append(suggestion, redisearch.Suggestion{
 			Term:    word,

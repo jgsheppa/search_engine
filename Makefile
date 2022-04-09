@@ -19,3 +19,6 @@ docs:
 
 test_data:
 	curl -X POST -H "Content-Type: application/json" -d @./test_data.json http://localhost:3000/api/documents
+
+prod_data:
+	curl -X POST -H "Content-Type: application/json" -d @./test_data.json https://bp-search-engine.herokuapp.com/api/documents

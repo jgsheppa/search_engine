@@ -66,7 +66,7 @@ func main() {
 	swagger.SwaggerInfo.Version = "1.0"
 	swagger.SwaggerInfo.Host = baseUrl
 	swagger.SwaggerInfo.BasePath = "/"
-	swagger.SwaggerInfo.Schemes = []string{"http", "https"}
+	swagger.SwaggerInfo.Schemes = []string{"https"}
 
 	searchController := controllers.NewArticle(*pool, *c, *autocomplete)
 

@@ -29,13 +29,22 @@ func SuggestionFactory(wordArray []string) []redisearch.Suggestion {
 	for index, word := range wordArray {
 		wordArrayLength := len(wordArray) - 1
 		increment := 2
-		stopSlice := increment + index
+		limit := increment + index
 
 		if index == wordArrayLength {
+			// Add single word as suggestion
+			suggestion = append(suggestion, redisearch.Suggestion{
+				Term:    word,
+				Score:   100,
+				Payload: word,
+				Incr:    false,
+			})
+
 			return suggestion
 		}
-		stringPortion := strings.Join(wordArray[:stopSlice], " ")
 
+		// Add beginning of phrase to limit as suggestion
+		stringPortion := strings.Join(wordArray[:limit], " ")
 		suggestion = append(suggestion, redisearch.Suggestion{
 			Term:    stringPortion,
 			Score:   100,
@@ -44,8 +53,8 @@ func SuggestionFactory(wordArray []string) []redisearch.Suggestion {
 		})
 
 		if index > 0 {
-			stringPortion = strings.Join(wordArray[index:stopSlice], " ")
-
+			// Add section of phrase to suggestions
+			stringPortion = strings.Join(wordArray[index:limit], " ")
 			suggestion = append(suggestion, redisearch.Suggestion{
 				Term:    stringPortion,
 				Score:   100,
@@ -54,13 +63,13 @@ func SuggestionFactory(wordArray []string) []redisearch.Suggestion {
 			})
 		}
 
+		// Add single word as suggestion
 		suggestion = append(suggestion, redisearch.Suggestion{
 			Term:    word,
 			Score:   100,
 			Payload: word,
 			Incr:    false,
 		})
-
 	}
 
 	return suggestion

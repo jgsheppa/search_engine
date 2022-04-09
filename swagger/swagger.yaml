@@ -145,11 +145,23 @@ paths:
     get:
       operationId: term
       parameters:
-      - description: search term
+      - description: Search by keyword
         in: path
         name: term
         required: true
         type: string
+      - description: Sort by field
+        in: query
+        name: sort
+        type: string
+      - description: 'Accepted terms: true, false'
+        in: query
+        name: ascending
+        type: string
+      - description: Limit number of results
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
@@ -166,37 +178,6 @@ paths:
           schema:
             type: string
       summary: Search Redisearch documents
-      tags:
-      - Search
-  /api/search/{term}/{sortBy}:
-    get:
-      parameters:
-      - description: search term
-        in: path
-        name: term
-        required: true
-        type: string
-      - description: sort by
-        in: path
-        name: sortBy
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Ok
-          schema:
-            $ref: '#/definitions/controllers.SwaggerSearchResponse'
-        "404":
-          description: Not Found
-          schema:
-            type: string
-        "500":
-          description: Server Error
-          schema:
-            type: string
-      summary: Search and sort Redisearch documents
       tags:
       - Search
 schemes:

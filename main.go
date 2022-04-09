@@ -84,7 +84,29 @@ func main() {
 	r.HandleFunc("/api/index/create/", searchController.CreateIndex).Methods("POST")
 	// Search routes
 	r.HandleFunc("/api/search/{term}", searchController.Search).Methods("GET")
-	r.HandleFunc("/api/search/{term}/{sortBy}", searchController.SearchAndSort).Methods("GET")
+	r.HandleFunc("/api/search/{term}", searchController.Search).
+		Queries("limit", "{limit}").
+		Methods("GET")
+	r.HandleFunc("/api/search/{term}", searchController.Search).
+		Queries("ascending", "{ascending}").
+		Methods("GET")
+	r.HandleFunc("/api/search/{term}", searchController.Search).
+		Queries("sort", "{sort}").
+		Methods("GET")
+	r.HandleFunc("/api/search/{term}", searchController.Search).
+		Queries("sort", "{sort}").
+		Queries("ascending", "{ascending}").Methods("GET")
+	r.HandleFunc("/api/search/{term}", searchController.Search).
+		Queries("sort", "{sort}").
+		Queries("limit", "{limit}").Methods("GET")
+	r.HandleFunc("/api/search/{term}", searchController.Search).
+		Queries("limit", "{limit}").
+		Queries("ascending", "{ascending}").Methods("GET")
+	r.HandleFunc("/api/search/{term}", searchController.Search).
+		Queries("sort", "{sort}").
+		Queries("ascending", "{ascending}").
+		Queries("limit", "{limit}").
+		Methods("GET")
 
 	// HandlerFunc converts notFound to the correct type
 	r.NotFoundHandler = http.HandlerFunc(NotFound)

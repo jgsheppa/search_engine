@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type SearchResponse struct {
@@ -51,7 +52,10 @@ type SuggestOptions struct {
 // @Summary Search Redisearch documents
 // @Tags Search
 // @ID term
-// @Param term path string true "search term"
+// @Param term path string true "Search by keyword"
+// @Param sort query string false "Sort by field"
+// @Param ascending query string false "Accepted terms: true, false"
+// @Param limit query int false "Limit number of results"
 // @Produce json
 // @Success 200 {object} SwaggerSearchResponse "Ok"
 // @Failure 404 {string} string "Not Found"
@@ -60,38 +64,40 @@ type SuggestOptions struct {
 func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	term := mux.Vars(r)["term"]
+	sort := r.FormValue("sort")
+	ascending := r.FormValue("ascending")
+	limit := r.FormValue("limit")
+
+	queryLimit := 5
+	if len(limit) > 0 {
+		limitAsInt, err := strconv.Atoi(limit)
+		if err != nil {
+			fmt.Fprintln(w, "Error with limit query")
+		}
+		queryLimit = limitAsInt
+	}
+
 	sortBy := "date"
+	if len(sort) > 0 {
+		sortBy = sort
+	}
 
-	SearchAndSuggest(w, rdb, term, sortBy)
+	isAscending := true
+	if ascending == "false" {
+		isAscending = false
+	}
+
+	SearchAndSuggest(w, rdb, isAscending, queryLimit, term, sortBy)
 }
 
-// SearchAndSort godoc
-// @Summary Search and sort Redisearch documents
-// @Tags Search
-// @Param term path string true "search term"
-// @Param sortBy path string true "sort by"
-// @produce json
-// @Success 200 {object} SwaggerSearchResponse "Ok"
-// @Response 200 {object} SwaggerSearchResponse "Ok"
-// @Failure 404 {string} Not Found "Not Found"
-// @Failure 500 {string} Server Error "Server Error"
-// @Router /api/search/{term}/{sortBy} [get]
-func (rdb *RedisDB) SearchAndSort(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	term := mux.Vars(r)["term"]
-	sortBy := mux.Vars(r)["sortBy"]
-
-	SearchAndSuggest(w, rdb, term, sortBy)
-}
-
-func SearchAndSuggest(w http.ResponseWriter, rdb *RedisDB, term string, sortBy string) {
+func SearchAndSuggest(w http.ResponseWriter, rdb *RedisDB, order bool, limit int, term, sortBy string) {
 	var HighlightedFields = []string{"title", "author", "topic"}
 
 	// Searching with limit and sorting
 	docs, total, err := rdb.redisSearch.Search(redisearch.NewQuery(term).
-		Limit(0, 5).
+		Limit(0, limit).
 		Highlight(HighlightedFields, "<b>", "</b>").
-		SetSortBy(sortBy, true))
+		SetSortBy(sortBy, order))
 
 	if err != nil {
 		log.Println(err)

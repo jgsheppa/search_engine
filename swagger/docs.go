@@ -127,57 +127,28 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "search term",
-                        "name": "term",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Ok",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.SwaggerSearchResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/search/{term}/{sortBy}": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Search"
-                ],
-                "summary": "Search and sort Redisearch documents",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "search term",
+                        "description": "Search by keyword",
                         "name": "term",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "sort by",
-                        "name": "sortBy",
-                        "in": "path",
-                        "required": true
+                        "description": "Sort by field",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Accepted terms: true, false",
+                        "name": "ascending",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit number of results",
+                        "name": "limit",
+                        "in": "query"
                     }
                 ],
                 "responses": {

@@ -34,10 +34,19 @@ func main() {
 	client := pool.Get()
 	defer client.Close()
 
-	c, autocomplete, err := models.CreateIndex(pool)
+	//c, autocomplete, err := models.CreateIndex(pool)
+	//if err != nil {
+	//	log.Println(err)
+	//}
+
+	c, autocomplete, err := models.CreateIndex(pool, "guide")
 	if err != nil {
 		log.Println(err)
 	}
+	//_, _, err = models.CreateIndex(pool, "guide")
+	//if err != nil {
+	//	log.Println(err)
+	//}
 
 	swagger.SwaggerInfo.Title = "BestPracticer Search Engine"
 	swagger.SwaggerInfo.Description = "This is a search engine built with Redisearch"
@@ -54,32 +63,33 @@ func main() {
 	r.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger", http.FileServer(http.Dir("swagger"))))
 	r.HandleFunc("/", controllers.DisplayAPIRoutes).Methods("GET")
 	// Document routes
-	r.HandleFunc("/api/documents", searchController.PostDocuments).Methods("POST")
+	r.HandleFunc("/api/document/article", searchController.PostDocuments).Methods("POST")
+	r.HandleFunc("/api/document/guide/{url}", searchController.PostGuideDocuments).Methods("POST")
 	r.HandleFunc("/api/document/delete/{documentName}", searchController.DeleteDocument).Methods("DELETE")
 	// Index routes
 	r.HandleFunc("/api/index/delete/", searchController.DropIndex).Methods("DELETE")
 	r.HandleFunc("/api/index/create/", searchController.CreateIndex).Methods("POST")
 	// Search routes
-	r.HandleFunc("/api/search/{term}", searchController.Search).Methods("GET")
-	r.HandleFunc("/api/search/{term}", searchController.Search).
+	r.HandleFunc("/api/search/{term}/{service}", searchController.Search).Methods("GET")
+	r.HandleFunc("/api/search/{term}/{service}", searchController.Search).
 		Queries("limit", "{limit}").
 		Methods("GET")
-	r.HandleFunc("/api/search/{term}", searchController.Search).
+	r.HandleFunc("/api/search/{term}/{service}", searchController.Search).
 		Queries("ascending", "{ascending}").
 		Methods("GET")
-	r.HandleFunc("/api/search/{term}", searchController.Search).
+	r.HandleFunc("/api/search/{term}/{service}", searchController.Search).
 		Queries("sort", "{sort}").
 		Methods("GET")
-	r.HandleFunc("/api/search/{term}", searchController.Search).
+	r.HandleFunc("/api/search/{term}/{service}", searchController.Search).
 		Queries("sort", "{sort}").
 		Queries("ascending", "{ascending}").Methods("GET")
-	r.HandleFunc("/api/search/{term}", searchController.Search).
+	r.HandleFunc("/api/search/{term}/{service}", searchController.Search).
 		Queries("sort", "{sort}").
 		Queries("limit", "{limit}").Methods("GET")
-	r.HandleFunc("/api/search/{term}", searchController.Search).
+	r.HandleFunc("/api/search/{term}/{service}", searchController.Search).
 		Queries("limit", "{limit}").
 		Queries("ascending", "{ascending}").Methods("GET")
-	r.HandleFunc("/api/search/{term}", searchController.Search).
+	r.HandleFunc("/api/search/{term}/{service}", searchController.Search).
 		Queries("sort", "{sort}").
 		Queries("ascending", "{ascending}").
 		Queries("limit", "{limit}").

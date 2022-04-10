@@ -20,33 +20,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/document/delete/{documentName}": {
-            "delete": {
-                "tags": [
-                    "Document"
-                ],
-                "summary": "Delete documents from Redisearch",
-                "operationId": "documentName",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "search term",
-                        "name": "documentName",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/documents": {
+        "/api/document/article": {
             "post": {
                 "tags": [
                     "Document"
@@ -82,7 +56,80 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/document/delete/{documentName}": {
+            "delete": {
+                "tags": [
+                    "Document"
+                ],
+                "summary": "Delete documents from Redisearch",
+                "operationId": "documentName",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "search term",
+                        "name": "documentName",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/document/guide/{url}": {
+            "post": {
+                "tags": [
+                    "Document"
+                ],
+                "summary": "Post documents to Redisearch",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "URL path of guidebook",
+                        "name": "url",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Guide"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": ""
+                    }
+                }
+            }
+        },
         "/api/index/create/": {
+            "post": {
+                "tags": [
+                    "Index"
+                ],
+                "summary": "Delete all documents from Redisearch",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/index/create/articles": {
             "post": {
                 "tags": [
                     "Index"
@@ -114,7 +161,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/search/{term}": {
+        "/api/search/{term}/{service}": {
             "get": {
                 "produces": [
                     "application/json"
@@ -131,6 +178,12 @@ const docTemplate = `{
                         "name": "term",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Options: guide or article",
+                        "name": "service",
+                        "in": "path"
                     },
                     {
                         "type": "string",
@@ -270,6 +323,27 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "title": {
+                    "description": "Title of article",
+                    "type": "string"
+                },
+                "topic": {
+                    "description": "Topics of article",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "URL of article",
+                    "type": "string"
+                }
+            }
+        },
+        "models.Guide": {
+            "type": "object",
+            "properties": {
+                "document": {
+                    "description": "Document name, if possible a UUID",
+                    "type": "string"
                 },
                 "title": {
                     "description": "Title of article",

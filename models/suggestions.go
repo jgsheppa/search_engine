@@ -23,6 +23,20 @@ func CreateSuggestions(article Article) []redisearch.Suggestion {
 	return suggestion
 }
 
+func CreateGuideSuggestions(guide Guide) []redisearch.Suggestion {
+	var suggestion []redisearch.Suggestion
+
+	splitTitle := strings.Split(guide.Text, " ")
+	title := SuggestionFactory(splitTitle)
+	suggestion = append(suggestion, title...)
+
+	splitTopic := strings.Split(guide.Topic, " ")
+	topic := SuggestionFactory(splitTopic)
+	suggestion = append(suggestion, topic...)
+
+	return suggestion
+}
+
 func SuggestionFactory(wordArray []string) []redisearch.Suggestion {
 	var suggestion []redisearch.Suggestion
 

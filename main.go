@@ -34,19 +34,15 @@ func main() {
 	client := pool.Get()
 	defer client.Close()
 
-	//c, autocomplete, err := models.CreateIndex(pool)
-	//if err != nil {
-	//	log.Println(err)
-	//}
-
-	c, autocomplete, err := models.CreateIndex(pool, "guide")
+	c, autocomplete, err := models.CreateIndex(pool, "articles")
 	if err != nil {
 		log.Println(err)
 	}
-	//_, _, err = models.CreateIndex(pool, "guide")
-	//if err != nil {
-	//	log.Println(err)
-	//}
+
+	cGuide, autocompleteGuide, err := models.CreateIndex(pool, "guide")
+	if err != nil {
+		log.Println(err)
+	}
 
 	swagger.SwaggerInfo.Title = "BestPracticer Search Engine"
 	swagger.SwaggerInfo.Description = "This is a search engine built with Redisearch"
@@ -57,6 +53,7 @@ func main() {
 
 	r := mux.NewRouter()
 	searchController := controllers.NewArticle(*pool, *c, *autocomplete)
+	guideController := controllers.NewArticle(*pool, *cGuide, *autocompleteGuide)
 
 	// Swagger routes
 	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
@@ -64,32 +61,61 @@ func main() {
 	r.HandleFunc("/", controllers.DisplayAPIRoutes).Methods("GET")
 	// Document routes
 	r.HandleFunc("/api/document/article", searchController.PostDocuments).Methods("POST")
-	r.HandleFunc("/api/document/guide/{url}", searchController.PostGuideDocuments).Methods("POST")
+	r.HandleFunc("/api/document/guide/{url}", guideController.PostGuideDocuments).Methods("POST")
 	r.HandleFunc("/api/document/delete/{documentName}", searchController.DeleteDocument).Methods("DELETE")
 	// Index routes
-	r.HandleFunc("/api/index/delete/", searchController.DropIndex).Methods("DELETE")
-	r.HandleFunc("/api/index/create/", searchController.CreateIndex).Methods("POST")
+	r.HandleFunc("/api/index/delete/articles", searchController.DropIndex).Methods("DELETE")
+	r.HandleFunc("/api/index/delete/guide", guideController.DropIndex).Methods("DELETE")
+	r.HandleFunc("/api/index/create/articles", searchController.CreateIndex).Methods("POST")
+	r.HandleFunc("/api/index/create/guide", guideController.CreateGuideIndex).Methods("POST")
+
 	// Search routes
-	r.HandleFunc("/api/search/{term}/{service}", searchController.Search).Methods("GET")
-	r.HandleFunc("/api/search/{term}/{service}", searchController.Search).
+	r.HandleFunc("/api/search/{term}", searchController.Search).Methods("GET")
+	r.HandleFunc("/api/search/{term}", searchController.Search).
 		Queries("limit", "{limit}").
 		Methods("GET")
-	r.HandleFunc("/api/search/{term}/{service}", searchController.Search).
+	r.HandleFunc("/api/search/{term}", searchController.Search).
 		Queries("ascending", "{ascending}").
 		Methods("GET")
-	r.HandleFunc("/api/search/{term}/{service}", searchController.Search).
+	r.HandleFunc("/api/search/{term}", searchController.Search).
 		Queries("sort", "{sort}").
 		Methods("GET")
-	r.HandleFunc("/api/search/{term}/{service}", searchController.Search).
+	r.HandleFunc("/api/search/{term}", searchController.Search).
 		Queries("sort", "{sort}").
 		Queries("ascending", "{ascending}").Methods("GET")
-	r.HandleFunc("/api/search/{term}/{service}", searchController.Search).
+	r.HandleFunc("/api/search/{term}", searchController.Search).
 		Queries("sort", "{sort}").
 		Queries("limit", "{limit}").Methods("GET")
-	r.HandleFunc("/api/search/{term}/{service}", searchController.Search).
+	r.HandleFunc("/api/search/{term}", searchController.Search).
 		Queries("limit", "{limit}").
 		Queries("ascending", "{ascending}").Methods("GET")
-	r.HandleFunc("/api/search/{term}/{service}", searchController.Search).
+	r.HandleFunc("/api/search/{term}", searchController.Search).
+		Queries("sort", "{sort}").
+		Queries("ascending", "{ascending}").
+		Queries("limit", "{limit}").
+		Methods("GET")
+
+	// Search routes
+	r.HandleFunc("/api/search/guide/{term}", guideController.SearchGuide).Methods("GET")
+	r.HandleFunc("/api/search/guide/{term}", guideController.SearchGuide).
+		Queries("limit", "{limit}").
+		Methods("GET")
+	r.HandleFunc("/api/search/guide/{term}", guideController.SearchGuide).
+		Queries("ascending", "{ascending}").
+		Methods("GET")
+	r.HandleFunc("/api/search/guide/{term}", guideController.SearchGuide).
+		Queries("sort", "{sort}").
+		Methods("GET")
+	r.HandleFunc("/api/search/guide/{term}", guideController.SearchGuide).
+		Queries("sort", "{sort}").
+		Queries("ascending", "{ascending}").Methods("GET")
+	r.HandleFunc("/api/search/guide/{term}", guideController.SearchGuide).
+		Queries("sort", "{sort}").
+		Queries("limit", "{limit}").Methods("GET")
+	r.HandleFunc("/api/search/guide/{term}", guideController.SearchGuide).
+		Queries("limit", "{limit}").
+		Queries("ascending", "{ascending}").Methods("GET")
+	r.HandleFunc("/api/search/guide/{term}", guideController.SearchGuide).
 		Queries("sort", "{sort}").
 		Queries("ascending", "{ascending}").
 		Queries("limit", "{limit}").

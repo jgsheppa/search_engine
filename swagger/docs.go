@@ -113,28 +113,12 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/index/create/": {
-            "post": {
-                "tags": [
-                    "Index"
-                ],
-                "summary": "Delete all documents from Redisearch",
-                "responses": {
-                    "200": {
-                        "description": "Ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
         "/api/index/create/articles": {
             "post": {
                 "tags": [
                     "Index"
                 ],
-                "summary": "Delete all documents from Redisearch",
+                "summary": "Create Redis index for BestPracticer guides",
                 "responses": {
                     "200": {
                         "description": "Ok",
@@ -145,7 +129,23 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/index/delete/": {
+        "/api/index/create/guide": {
+            "post": {
+                "tags": [
+                    "Index"
+                ],
+                "summary": "Create Redis index for BestPracticer guides",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/index/delete/articles": {
             "delete": {
                 "tags": [
                     "Index"
@@ -161,7 +161,23 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/search/{term}/{service}": {
+        "/api/index/delete/guide": {
+            "delete": {
+                "tags": [
+                    "Index"
+                ],
+                "summary": "Delete all documents from Redisearch",
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/search/guide/{term}": {
             "get": {
                 "produces": [
                     "application/json"
@@ -170,7 +186,7 @@ const docTemplate = `{
                     "Search"
                 ],
                 "summary": "Search Redisearch documents",
-                "operationId": "term",
+                "operationId": "guide search",
                 "parameters": [
                     {
                         "type": "string",
@@ -181,9 +197,62 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Options: guide or article",
-                        "name": "service",
-                        "in": "path"
+                        "description": "Sort by field",
+                        "name": "sort",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Ascending?",
+                        "name": "ascending",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit number of results",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ok",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.SwaggerSearchResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ApiError"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ApiError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/search/{term}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Search Redisearch documents",
+                "operationId": "article search",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search by keyword",
+                        "name": "term",
+                        "in": "path",
+                        "required": true
                     },
                     {
                         "type": "string",

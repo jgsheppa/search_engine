@@ -163,16 +163,6 @@ paths:
       summary: Post documents to Redisearch
       tags:
       - Document
-  /api/index/create/:
-    post:
-      responses:
-        "200":
-          description: Ok
-          schema:
-            type: string
-      summary: Delete all documents from Redisearch
-      tags:
-      - Index
   /api/index/create/articles:
     post:
       responses:
@@ -180,10 +170,20 @@ paths:
           description: Ok
           schema:
             type: string
-      summary: Delete all documents from Redisearch
+      summary: Create Redis index for BestPracticer guides
       tags:
       - Index
-  /api/index/delete/:
+  /api/index/create/guide:
+    post:
+      responses:
+        "200":
+          description: Ok
+          schema:
+            type: string
+      summary: Create Redis index for BestPracticer guides
+      tags:
+      - Index
+  /api/index/delete/articles:
     delete:
       responses:
         "200":
@@ -193,18 +193,63 @@ paths:
       summary: Delete all documents from Redisearch
       tags:
       - Index
-  /api/search/{term}/{service}:
+  /api/index/delete/guide:
+    delete:
+      responses:
+        "200":
+          description: Ok
+          schema:
+            type: string
+      summary: Delete all documents from Redisearch
+      tags:
+      - Index
+  /api/search/{term}:
     get:
-      operationId: term
+      operationId: article search
       parameters:
       - description: Search by keyword
         in: path
         name: term
         required: true
         type: string
-      - description: 'Options: guide or article'
+      - description: Sort by field
+        in: query
+        name: sort
+        type: string
+      - description: Ascending?
+        in: query
+        name: ascending
+        type: boolean
+      - description: Limit number of results
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/controllers.SwaggerSearchResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ApiError'
+        "500":
+          description: Server Error
+          schema:
+            $ref: '#/definitions/controllers.ApiError'
+      summary: Search Redisearch documents
+      tags:
+      - Search
+  /api/search/guide/{term}:
+    get:
+      operationId: guide search
+      parameters:
+      - description: Search by keyword
         in: path
-        name: service
+        name: term
+        required: true
         type: string
       - description: Sort by field
         in: query

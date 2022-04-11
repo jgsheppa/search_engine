@@ -29,7 +29,7 @@ func ScrapeGuidebookPages(url string) models.Guides {
 	baseURL := "https://guidebook.bestpracticer.com/" + url
 	var topic string
 	var subHeaders []string
-	var paragraphs []string
+	var header4 []string
 	var guides models.Guides
 
 	c := colly.NewCollector(
@@ -38,7 +38,7 @@ func ScrapeGuidebookPages(url string) models.Guides {
 	c.OnHTML(".content", func(e *colly.HTMLElement) {
 		topic = e.ChildText("h2")
 		subHeaders = e.ChildTexts("h3")
-		paragraphs = e.ChildTexts("div")
+		header4 = e.ChildTexts("h4")
 	})
 	c.Visit(baseURL)
 
@@ -47,16 +47,16 @@ func ScrapeGuidebookPages(url string) models.Guides {
 			Document: topic + strconv.Itoa(i) + "header",
 			Text:     header,
 			Topic:    topic,
-			URL:      url,
+			URL:      baseURL,
 		})
 	}
 
-	for i, paragraph := range paragraphs {
+	for i, header := range header4 {
 		guides = append(guides, models.Guide{
-			Document: topic + strconv.Itoa(i) + "paragraph",
-			Text:     paragraph,
+			Document: topic + strconv.Itoa(i) + "header4",
+			Text:     header,
 			Topic:    topic,
-			URL:      url,
+			URL:      baseURL,
 		})
 	}
 	return guides

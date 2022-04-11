@@ -19,7 +19,7 @@ type Guide struct {
 
 type Guides []Guide
 
-func CreateGuideDocument(rs redisearch.Client, autoCompleter redisearch.Autocompleter, guides Guides) {
+func CreateGuideDocument(rs redisearch.Client, autoCompleter redisearch.Autocompleter, guides Guides) error {
 	var documents []redisearch.Document
 
 	for _, guide := range guides {
@@ -40,6 +40,7 @@ func CreateGuideDocument(rs redisearch.Client, autoCompleter redisearch.Autocomp
 
 	// Index the document. The API accepts multiple documents at a time
 	if err := rs.Index(documents...); err != nil {
-		log.Fatal(err)
+		return err
 	}
+	return nil
 }

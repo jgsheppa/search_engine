@@ -20,7 +20,10 @@ func (rdb *RedisDB) PostGuideDocuments(w http.ResponseWriter, r *http.Request) {
 	url := mux.Vars(r)["url"]
 	guides := scraper.ScrapeGuidebookPages(url)
 
-	models.CreateGuideDocument(rdb.redisSearch, rdb.autoCompleter, guides)
+	err := models.CreateGuideDocument(rdb.redisSearch, rdb.autoCompleter, guides)
+	if err != nil {
+		json.NewEncoder(w).Encode(validationError)
+	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)

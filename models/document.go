@@ -31,7 +31,7 @@ type Field struct {
 
 type Articles []Article
 
-func CreateDocument(rs redisearch.Client, autoCompleter redisearch.Autocompleter, articles Articles) {
+func CreateDocument(rs redisearch.Client, autoCompleter redisearch.Autocompleter, articles Articles) error {
 	var documents []redisearch.Document
 
 	for _, article := range articles {
@@ -54,8 +54,9 @@ func CreateDocument(rs redisearch.Client, autoCompleter redisearch.Autocompleter
 
 	// Index the document. The API accepts multiple documents at a time
 	if err := rs.Index(documents...); err != nil {
-		log.Fatal(err)
+		return err
 	}
+	return nil
 }
 
 func DeleteDocument(rs redisearch.Client, document string) error {

@@ -60,7 +60,10 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	models.CreateDocument(rdb.redisSearch, rdb.autoCompleter, articles)
+	err = models.CreateDocument(rdb.redisSearch, rdb.autoCompleter, articles)
+	if err != nil {
+		json.NewEncoder(w).Encode(validationError)
+	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)

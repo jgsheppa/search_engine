@@ -41,7 +41,7 @@ type Field struct {
 // @Param Body body models.Articles true "The body to create a Redis document for an article"
 // @Success 201 {object} models.Articles
 // @Failure 422
-// @Router /api/documents [post]
+// @Router /api/document/article [post]
 func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 	var articles models.Articles
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
@@ -60,7 +60,10 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	models.CreateDocument(rdb.redisSearch, rdb.autoCompleter, articles)
+	err = models.CreateDocument(rdb.redisSearch, rdb.autoCompleter, articles)
+	if err != nil {
+		json.NewEncoder(w).Encode(validationError)
+	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusCreated)

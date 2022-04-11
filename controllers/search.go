@@ -52,6 +52,7 @@ type SuggestOptions struct {
 // @Tags Search
 // @ID term
 // @Param term path string true "Search by keyword"
+// @Param service path string false "Options: guide or article"
 // @Param sort query string false "Sort by field"
 // @Param ascending query boolean false "Ascending?"
 // @Param limit query int false "Limit number of results"
@@ -59,10 +60,11 @@ type SuggestOptions struct {
 // @Success 200 {object} SwaggerSearchResponse "Ok"
 // @Failure 404 {object} ApiError "Not Found"
 // @Failure 500 {object} ApiError "Server Error"
-// @Router /api/search/{term} [get]
+// @Router /api/search/{term}/{service} [get]
 func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	term := mux.Vars(r)["term"]
+	service := mux.Vars(r)["service"]
 	sort := r.FormValue("sort")
 	ascending := r.FormValue("ascending")
 	limit := r.FormValue("limit")
@@ -86,11 +88,24 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 		isAscending = false
 	}
 
-	SearchAndSuggest(w, rdb, isAscending, queryLimit, term, sortBy)
+	highlightedFields := []string{"title", "author", "topic"}
+	if service == "guide" {
+		highlightedFields = []string{"text", "topic"}
+	}
+
+	SearchAndSuggest(w, rdb, isAscending, queryLimit, term, sortBy, highlightedFields)
 }
 
-func SearchAndSuggest(w http.ResponseWriter, rdb *RedisDB, order bool, limit int, term, sortBy string) {
-	var HighlightedFields = []string{"title", "author", "topic"}
+func SearchAndSuggest(
+	w http.ResponseWriter,
+	rdb *RedisDB,
+	order bool,
+	limit int,
+	term,
+	sortBy string,
+	highlightedFields []string,
+) {
+	var HighlightedFields = highlightedFields
 
 	// Searching with limit and sorting
 	docs, total, err := rdb.redisSearch.Search(redisearch.NewQuery(term).

@@ -78,6 +78,21 @@ definitions:
         description: URL of article
         type: string
     type: object
+  models.Guide:
+    properties:
+      document:
+        description: Document name, if possible a UUID
+        type: string
+      title:
+        description: Title of article
+        type: string
+      topic:
+        description: Topics of article
+        type: string
+      url:
+        description: URL of article
+        type: string
+    type: object
 host: localhost:3000
 info:
   contact: {}
@@ -88,24 +103,7 @@ info:
   title: BestPracticer Search Engine
   version: "1.0"
 paths:
-  /api/document/delete/{documentName}:
-    delete:
-      operationId: documentName
-      parameters:
-      - description: search term
-        in: path
-        name: documentName
-        required: true
-        type: string
-      responses:
-        "200":
-          description: Ok
-          schema:
-            type: string
-      summary: Delete documents from Redisearch
-      tags:
-      - Document
-  /api/documents:
+  /api/document/article:
     post:
       parameters:
       - description: The body to create a Redis document for an article
@@ -128,7 +126,54 @@ paths:
       summary: Post documents to Redisearch
       tags:
       - Document
+  /api/document/delete/{documentName}:
+    delete:
+      operationId: documentName
+      parameters:
+      - description: search term
+        in: path
+        name: documentName
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Ok
+          schema:
+            type: string
+      summary: Delete documents from Redisearch
+      tags:
+      - Document
+  /api/document/guide/{url}:
+    post:
+      parameters:
+      - description: URL path of guidebook
+        in: path
+        name: url
+        required: true
+        type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/models.Guide'
+            type: array
+        "422":
+          description: ""
+      summary: Post documents to Redisearch
+      tags:
+      - Document
   /api/index/create/:
+    post:
+      responses:
+        "200":
+          description: Ok
+          schema:
+            type: string
+      summary: Delete all documents from Redisearch
+      tags:
+      - Index
+  /api/index/create/articles:
     post:
       responses:
         "200":
@@ -148,7 +193,7 @@ paths:
       summary: Delete all documents from Redisearch
       tags:
       - Index
-  /api/search/{term}:
+  /api/search/{term}/{service}:
     get:
       operationId: term
       parameters:
@@ -156,6 +201,10 @@ paths:
         in: path
         name: term
         required: true
+        type: string
+      - description: 'Options: guide or article'
+        in: path
+        name: service
         type: string
       - description: Sort by field
         in: query

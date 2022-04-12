@@ -40,6 +40,22 @@ type SwaggerSearchResponse struct {
 	Total      int                 `json:"total" example:"1"`
 }
 
+type swaggerGuideResponse struct {
+	// Author of article
+	Text string `json:"author" example:"Goal Setting"`
+	// URL of doc
+	URL string `json:"url" example:"www.guidebook.bestpracticer.com/goal-setting"`
+	// Topics of article
+	Topic string `json:"topic" example:"Goal Setting"`
+	Date  int    `json:"date" example:"1649762803"`
+}
+
+type SwaggerSearchGuideResponse struct {
+	Suggestion []swaggerSuggestion    `json:"suggestion"`
+	Response   []swaggerGuideResponse `json:"response"`
+	Total      int                    `json:"total" example:"1"`
+}
+
 type SuggestOptions struct {
 	Num          int
 	Fuzzy        bool
@@ -100,7 +116,7 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 // @Param ascending query boolean false "Ascending?"
 // @Param limit query int false "Limit number of results"
 // @Produce json
-// @Success 200 {object} SwaggerSearchResponse "Ok"
+// @Success 200 {object} SwaggerSearchGuideResponse "Ok"
 // @Failure 404 {object} ApiError "Not Found"
 // @Failure 500 {object} ApiError "Server Error"
 // @Router /api/search/guide/{term} [get]

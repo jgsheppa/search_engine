@@ -60,7 +60,6 @@ func CreateDocument(rs redisearch.Client, autoCompleter redisearch.Autocompleter
 }
 
 func DeleteDocument(rs redisearch.Client, document string) error {
-
 	err := rs.DeleteDocument(document)
 	if err != nil {
 		return err

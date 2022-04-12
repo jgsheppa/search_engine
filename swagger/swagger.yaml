@@ -7,6 +7,20 @@ definitions:
       title:
         type: string
     type: object
+  controllers.SwaggerSearchGuideResponse:
+    properties:
+      response:
+        items:
+          $ref: '#/definitions/controllers.swaggerGuideResponse'
+        type: array
+      suggestion:
+        items:
+          $ref: '#/definitions/controllers.swaggerSuggestion'
+        type: array
+      total:
+        example: 1
+        type: integer
+    type: object
   controllers.SwaggerSearchResponse:
     properties:
       response:
@@ -20,6 +34,24 @@ definitions:
       total:
         example: 1
         type: integer
+    type: object
+  controllers.swaggerGuideResponse:
+    properties:
+      author:
+        description: Author of article
+        example: Goal Setting
+        type: string
+      date:
+        example: 1649762803
+        type: integer
+      topic:
+        description: Topics of article
+        example: Goal Setting
+        type: string
+      url:
+        description: URL of doc
+        example: www.guidebook.bestpracticer.com/goal-setting
+        type: string
     type: object
   controllers.swaggerResponse:
     properties:
@@ -122,7 +154,9 @@ paths:
               $ref: '#/definitions/models.Article'
             type: array
         "422":
-          description: ""
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/controllers.ApiError'
       summary: Post documents to Redisearch
       tags:
       - Document
@@ -140,6 +174,10 @@ paths:
           description: Ok
           schema:
             type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.ApiError'
       summary: Delete documents from Redisearch
       tags:
       - Document
@@ -269,7 +307,7 @@ paths:
         "200":
           description: Ok
           schema:
-            $ref: '#/definitions/controllers.SwaggerSearchResponse'
+            $ref: '#/definitions/controllers.SwaggerSearchGuideResponse'
         "404":
           description: Not Found
           schema:

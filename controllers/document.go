@@ -40,7 +40,7 @@ type Field struct {
 // @Tags Document
 // @Param Body body models.Articles true "The body to create a Redis document for an article"
 // @Success 201 {object} models.Articles
-// @Failure 422
+// @Failure 422 {object} ApiError
 // @Router /api/document/article [post]
 func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 	var articles models.Articles
@@ -79,13 +79,15 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 // @Param documentName path string true "search term"
 // @ID documentName
 // @Success 200 {string} string "Ok"
+// @Failure 404 {object} ApiError
 // @Router /api/document/delete/{documentName} [delete]
 func (rdb *RedisDB) DeleteDocument(w http.ResponseWriter, r *http.Request) {
 	term := mux.Vars(r)["documentName"]
 
 	err := models.DeleteDocument(rdb.redisSearch, term)
 	if err != nil {
-		json.NewEncoder(w).Encode(validationError)
+		json.NewEncoder(w).Encode(notFoundError)
+		return
 	}
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintln(w, http.StatusOK, "Document successfully deleted")

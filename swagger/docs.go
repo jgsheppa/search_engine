@@ -51,7 +51,10 @@ const docTemplate = `{
                         }
                     },
                     "422": {
-                        "description": ""
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ApiError"
+                        }
                     }
                 }
             }
@@ -77,6 +80,12 @@ const docTemplate = `{
                         "description": "Ok",
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ApiError"
                         }
                     }
                 }
@@ -218,7 +227,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Ok",
                         "schema": {
-                            "$ref": "#/definitions/controllers.SwaggerSearchResponse"
+                            "$ref": "#/definitions/controllers.SwaggerSearchGuideResponse"
                         }
                     },
                     "404": {
@@ -308,6 +317,27 @@ const docTemplate = `{
                 }
             }
         },
+        "controllers.SwaggerSearchGuideResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/controllers.swaggerGuideResponse"
+                    }
+                },
+                "suggestion": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/controllers.swaggerSuggestion"
+                    }
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
         "controllers.SwaggerSearchResponse": {
             "type": "object",
             "properties": {
@@ -326,6 +356,30 @@ const docTemplate = `{
                 "total": {
                     "type": "integer",
                     "example": 1
+                }
+            }
+        },
+        "controllers.swaggerGuideResponse": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "description": "Author of article",
+                    "type": "string",
+                    "example": "Goal Setting"
+                },
+                "date": {
+                    "type": "integer",
+                    "example": 1649762803
+                },
+                "topic": {
+                    "description": "Topics of article",
+                    "type": "string",
+                    "example": "Goal Setting"
+                },
+                "url": {
+                    "description": "URL of doc",
+                    "type": "string",
+                    "example": "www.guidebook.bestpracticer.com/goal-setting"
                 }
             }
         },

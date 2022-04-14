@@ -121,6 +121,11 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {object} ApiError "Server Error"
 // @Router /api/search/guide/{term} [get]
 func (rdb *RedisDB) SearchGuide(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	//Allow CORS here By * or specific origin
+	w.Header().Set("Access-Control-Allow-Origin", "https://search-fpzegfm7u-jgsheppa.vercel.app/")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
+
 	w.WriteHeader(http.StatusOK)
 	term := mux.Vars(r)["term"]
 	sort := r.FormValue("sort")

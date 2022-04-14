@@ -125,7 +125,7 @@ definitions:
         description: URL of article
         type: string
     type: object
-host: localhost:3000
+host: localhost:3001
 info:
   contact: {}
   description: This is a search engine built with Redisearch
@@ -181,12 +181,22 @@ paths:
       summary: Delete documents from Redisearch
       tags:
       - Document
-  /api/document/guide/{url}:
+  /api/document/guide/{url}/{htmlTag}/{containerClass}:
     post:
       parameters:
       - description: URL path of guidebook
         in: path
         name: url
+        required: true
+        type: string
+      - description: HTML tag to scrape
+        in: path
+        name: htmlTag
+        required: true
+        type: string
+      - description: Class of container holding HTML tag
+        in: path
+        name: containerClass
         required: true
         type: string
       responses:

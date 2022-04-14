@@ -14,7 +14,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:3000",
+    "host": "localhost:3001",
     "basePath": "/",
     "paths": {
         "/api/document/article": {
@@ -88,7 +88,7 @@
                 }
             }
         },
-        "/api/document/guide/{url}": {
+        "/api/document/guide/{url}/{htmlTag}/{containerClass}": {
             "post": {
                 "tags": [
                     "Document"
@@ -99,6 +99,20 @@
                         "type": "string",
                         "description": "URL path of guidebook",
                         "name": "url",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "HTML tag to scrape",
+                        "name": "htmlTag",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Class of container holding HTML tag",
+                        "name": "containerClass",
                         "in": "path",
                         "required": true
                     }

@@ -91,7 +91,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/document/guide/{url}": {
+        "/api/document/guide/{url}/{htmlTag}/{containerClass}": {
             "post": {
                 "tags": [
                     "Document"
@@ -102,6 +102,20 @@ const docTemplate = `{
                         "type": "string",
                         "description": "URL path of guidebook",
                         "name": "url",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "HTML tag to scrape",
+                        "name": "htmlTag",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Class of container holding HTML tag",
+                        "name": "containerClass",
                         "in": "path",
                         "required": true
                     }
@@ -488,7 +502,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:3000",
+	Host:             "localhost:3001",
 	BasePath:         "/",
 	Schemes:          []string{"http", "https"},
 	Title:            "BestPracticer Search Engine",

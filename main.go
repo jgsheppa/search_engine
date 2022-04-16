@@ -82,7 +82,7 @@ func main() {
 		Methods("GET")
 
 	// HandlerFunc converts notFound to the correct type
-	r.NotFoundHandler = http.HandlerFunc(controllers.NotFound)
+	r.NotFoundHandler = http.HandlerFunc(models.NotFound)
 
 	fmt.Println("Starting the development server on port " + port)
 	err = http.ListenAndServe(":"+port, r)

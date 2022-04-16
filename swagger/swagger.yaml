@@ -1,61 +1,10 @@
 basePath: /
 definitions:
-  controllers.ApiError:
+  models.ApiError:
     properties:
       description:
         type: string
       title:
-        type: string
-    type: object
-  controllers.SwaggerSearchResponse:
-    properties:
-      response:
-        items:
-          $ref: '#/definitions/controllers.swaggerResponse'
-        type: array
-      suggestion:
-        items:
-          $ref: '#/definitions/controllers.swaggerSuggestion'
-        type: array
-      total:
-        example: 1
-        type: integer
-    type: object
-  controllers.swaggerResponse:
-    properties:
-      author:
-        description: Author of article
-        example: Alex Appleton
-        type: string
-      id:
-        example: 1
-        type: integer
-      title:
-        description: Title of article
-        example: How to be awesome
-        type: string
-      topic:
-        description: Topics of article
-        example: Awesome Stuff
-        type: string
-      url:
-        description: URL of article
-        example: www.bestpracticer.com/awesome-article
-        type: string
-    type: object
-  controllers.swaggerSuggestion:
-    properties:
-      incr:
-        example: false
-        type: boolean
-      payload:
-        example: Pair
-        type: string
-      score:
-        example: 70.7
-        type: number
-      term:
-        example: Pair
         type: string
     type: object
   models.Document:
@@ -71,6 +20,53 @@ definitions:
         type: string
       url:
         description: URL of article
+        type: string
+    type: object
+  swagger.SwaggerResponse:
+    properties:
+      author:
+        description: Author of article
+        example: Goal Setting
+        type: string
+      date:
+        example: 1649762803
+        type: integer
+      topic:
+        description: Topics of article
+        example: Goal Setting
+        type: string
+      url:
+        description: URL of doc
+        example: www.guidebook.bestpracticer.com/goal-setting
+        type: string
+    type: object
+  swagger.SwaggerSearchResponse:
+    properties:
+      response:
+        items:
+          $ref: '#/definitions/swagger.SwaggerResponse'
+        type: array
+      suggestion:
+        items:
+          $ref: '#/definitions/swagger.SwaggerSuggestion'
+        type: array
+      total:
+        example: 1
+        type: integer
+    type: object
+  swagger.SwaggerSuggestion:
+    properties:
+      incr:
+        example: false
+        type: boolean
+      payload:
+        example: Pair
+        type: string
+      score:
+        example: 70.7
+        type: number
+      term:
+        example: Pair
         type: string
     type: object
 host: localhost:3001
@@ -104,7 +100,7 @@ paths:
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/controllers.ApiError'
+            $ref: '#/definitions/models.ApiError'
       summary: Post documents to Redisearch
       tags:
       - Document
@@ -134,7 +130,9 @@ paths:
               $ref: '#/definitions/models.Document'
             type: array
         "422":
-          description: ""
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/models.ApiError'
       summary: Post documents to Redisearch
       tags:
       - Document
@@ -155,7 +153,7 @@ paths:
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/controllers.ApiError'
+            $ref: '#/definitions/models.ApiError'
       summary: Delete documents from Redisearch
       tags:
       - Document
@@ -169,17 +167,7 @@ paths:
       summary: Create Redis index for BestPracticer guides
       tags:
       - Index
-  /api/index/delete/articles:
-    delete:
-      responses:
-        "200":
-          description: Ok
-          schema:
-            type: string
-      summary: Delete all documents from Redisearch
-      tags:
-      - Index
-  /api/index/delete/guide:
+  /api/index/delete:
     delete:
       responses:
         "200":
@@ -216,15 +204,15 @@ paths:
         "200":
           description: Ok
           schema:
-            $ref: '#/definitions/controllers.SwaggerSearchResponse'
+            $ref: '#/definitions/swagger.SwaggerSearchResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/controllers.ApiError'
+            $ref: '#/definitions/models.ApiError'
         "500":
           description: Server Error
           schema:
-            $ref: '#/definitions/controllers.ApiError'
+            $ref: '#/definitions/models.ApiError'
       summary: Search Redisearch documents
       tags:
       - Search

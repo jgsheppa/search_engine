@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/RediSearch/redisearch-go/redisearch"
-	"log"
 	"time"
 )
 
@@ -36,7 +35,7 @@ func (s *Services) CreateDocument(documents Documents) error {
 
 		err := s.Autocomplete.AddTerms(suggestion...)
 		if err != nil {
-			log.Println("Error adding term for autocomplete")
+			return &serverError
 		}
 
 		doc := redisearch.NewDocument(document.Document, 1.0)
@@ -49,7 +48,7 @@ func (s *Services) CreateDocument(documents Documents) error {
 
 	// Index the document. The API accepts multiple documents at a time
 	if err := s.Redisearch.Index(redisDocuments...); err != nil {
-		return err
+		return &serverError
 	}
 	return nil
 }
@@ -57,7 +56,7 @@ func (s *Services) CreateDocument(documents Documents) error {
 func (s *Services) DeleteDocument(document string) error {
 	err := s.Redisearch.DeleteDocument(document)
 	if err != nil {
-		return err
+		return &serverError
 	}
 	return nil
 }

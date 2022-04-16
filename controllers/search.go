@@ -3,50 +3,10 @@ package controllers
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
+	"github.com/jgsheppa/search_engine/models"
 	"net/http"
 	"strconv"
 )
-
-type swaggerResponse struct {
-	// Author of article
-	Author string `json:"author" example:"Alex Appleton"`
-	ID     int    `json:"id" example:"1"`
-	// URL of article
-	URL string `json:"url" example:"www.bestpracticer.com/awesome-article"`
-	// Title of article
-	Title string `json:"title" example:"How to be awesome"`
-	// Topics of article
-	Topic string `json:"topic" example:"Awesome Stuff"`
-}
-
-type swaggerSuggestion struct {
-	Term    string  `json:"term" example:"Pair"`
-	Score   float64 `json:"score" example:"70.70"`
-	Payload string  `json:"payload" example:"Pair"`
-	Incr    bool    `json:"incr" example:"false"`
-}
-
-type SwaggerSearchResponse struct {
-	Suggestion []swaggerSuggestion `json:"suggestion"`
-	Response   []swaggerResponse   `json:"response"`
-	Total      int                 `json:"total" example:"1"`
-}
-
-type swaggerGuideResponse struct {
-	// Author of article
-	Text string `json:"author" example:"Goal Setting"`
-	// URL of doc
-	URL string `json:"url" example:"www.guidebook.bestpracticer.com/goal-setting"`
-	// Topics of article
-	Topic string `json:"topic" example:"Goal Setting"`
-	Date  int    `json:"date" example:"1649762803"`
-}
-
-type SwaggerSearchGuideResponse struct {
-	Suggestion []swaggerSuggestion    `json:"suggestion"`
-	Response   []swaggerGuideResponse `json:"response"`
-	Total      int                    `json:"total" example:"1"`
-}
 
 type SuggestOptions struct {
 	Num          int
@@ -64,9 +24,9 @@ type SuggestOptions struct {
 // @Param ascending query boolean false "Ascending?"
 // @Param limit query int false "Limit number of results"
 // @Produce json
-// @Success 200 {object} SwaggerSearchResponse "Ok"
-// @Failure 404 {object} ApiError "Not Found"
-// @Failure 500 {object} ApiError "Server Error"
+// @Success 200 {object} swagger.SwaggerSearchResponse "Ok"
+// @Failure 404 {object} models.ApiError "Not Found"
+// @Failure 500 {object} models.ApiError "Server Error"
 // @Router /api/search/{term} [get]
 func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
@@ -79,7 +39,7 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 	if len(limit) > 0 {
 		limitAsInt, err := strconv.Atoi(limit)
 		if err != nil {
-			json.NewEncoder(w).Encode(validationError)
+			json.NewEncoder(w).Encode(models.ValidationError)
 			return
 		}
 		queryLimit = limitAsInt
@@ -99,7 +59,7 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 
 	result, err := rdb.s.SearchAndSuggest(isAscending, queryLimit, highlighted, term, sortBy)
 	if err != nil {
-		json.NewEncoder(w).Encode(validationError)
+		json.NewEncoder(w).Encode(models.ValidationError)
 		return
 	}
 	json.NewEncoder(w).Encode(result)

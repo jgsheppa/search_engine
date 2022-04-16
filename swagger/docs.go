@@ -53,7 +53,7 @@ const docTemplate = `{
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/controllers.ApiError"
+                            "$ref": "#/definitions/models.ApiError"
                         }
                     }
                 }
@@ -85,7 +85,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/controllers.ApiError"
+                            "$ref": "#/definitions/models.ApiError"
                         }
                     }
                 }
@@ -131,7 +131,10 @@ const docTemplate = `{
                         }
                     },
                     "422": {
-                        "description": ""
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiError"
+                        }
                     }
                 }
             }
@@ -152,23 +155,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/index/delete/articles": {
-            "delete": {
-                "tags": [
-                    "Index"
-                ],
-                "summary": "Delete all documents from Redisearch",
-                "responses": {
-                    "200": {
-                        "description": "Ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/index/delete/guide": {
+        "/api/index/delete": {
             "delete": {
                 "tags": [
                     "Index"
@@ -225,19 +212,19 @@ const docTemplate = `{
                     "200": {
                         "description": "Ok",
                         "schema": {
-                            "$ref": "#/definitions/controllers.SwaggerSearchResponse"
+                            "$ref": "#/definitions/swagger.SwaggerSearchResponse"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/controllers.ApiError"
+                            "$ref": "#/definitions/models.ApiError"
                         }
                     },
                     "500": {
                         "description": "Server Error",
                         "schema": {
-                            "$ref": "#/definitions/controllers.ApiError"
+                            "$ref": "#/definitions/models.ApiError"
                         }
                     }
                 }
@@ -245,7 +232,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "controllers.ApiError": {
+        "models.ApiError": {
             "type": "object",
             "properties": {
                 "description": {
@@ -253,77 +240,6 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
-                }
-            }
-        },
-        "controllers.SwaggerSearchResponse": {
-            "type": "object",
-            "properties": {
-                "response": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/controllers.swaggerResponse"
-                    }
-                },
-                "suggestion": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/controllers.swaggerSuggestion"
-                    }
-                },
-                "total": {
-                    "type": "integer",
-                    "example": 1
-                }
-            }
-        },
-        "controllers.swaggerResponse": {
-            "type": "object",
-            "properties": {
-                "author": {
-                    "description": "Author of article",
-                    "type": "string",
-                    "example": "Alex Appleton"
-                },
-                "id": {
-                    "type": "integer",
-                    "example": 1
-                },
-                "title": {
-                    "description": "Title of article",
-                    "type": "string",
-                    "example": "How to be awesome"
-                },
-                "topic": {
-                    "description": "Topics of article",
-                    "type": "string",
-                    "example": "Awesome Stuff"
-                },
-                "url": {
-                    "description": "URL of article",
-                    "type": "string",
-                    "example": "www.bestpracticer.com/awesome-article"
-                }
-            }
-        },
-        "controllers.swaggerSuggestion": {
-            "type": "object",
-            "properties": {
-                "incr": {
-                    "type": "boolean",
-                    "example": false
-                },
-                "payload": {
-                    "type": "string",
-                    "example": "Pair"
-                },
-                "score": {
-                    "type": "number",
-                    "example": 70.7
-                },
-                "term": {
-                    "type": "string",
-                    "example": "Pair"
                 }
             }
         },
@@ -345,6 +261,72 @@ const docTemplate = `{
                 "url": {
                     "description": "URL of article",
                     "type": "string"
+                }
+            }
+        },
+        "swagger.SwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "description": "Author of article",
+                    "type": "string",
+                    "example": "Goal Setting"
+                },
+                "date": {
+                    "type": "integer",
+                    "example": 1649762803
+                },
+                "topic": {
+                    "description": "Topics of article",
+                    "type": "string",
+                    "example": "Goal Setting"
+                },
+                "url": {
+                    "description": "URL of doc",
+                    "type": "string",
+                    "example": "www.guidebook.bestpracticer.com/goal-setting"
+                }
+            }
+        },
+        "swagger.SwaggerSearchResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/swagger.SwaggerResponse"
+                    }
+                },
+                "suggestion": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/swagger.SwaggerSuggestion"
+                    }
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "swagger.SwaggerSuggestion": {
+            "type": "object",
+            "properties": {
+                "incr": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "payload": {
+                    "type": "string",
+                    "example": "Pair"
+                },
+                "score": {
+                    "type": "number",
+                    "example": 70.7
+                },
+                "term": {
+                    "type": "string",
+                    "example": "Pair"
                 }
             }
         }

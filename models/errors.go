@@ -1,4 +1,4 @@
-package controllers
+package models
 
 import (
 	"encoding/json"
@@ -13,7 +13,7 @@ type ApiError struct {
 
 func NotFound(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
-	json.NewEncoder(w).Encode(notFoundError)
+	json.NewEncoder(w).Encode(NotFoundError)
 }
 
 // Make our struct implement the error interface
@@ -27,7 +27,7 @@ var serverError = ApiError{
 	Description: "We're sorry, something went wrong on our side",
 }
 
-var validationError = ApiError{
+var ValidationError = ApiError{
 	HttpStatus:  422,
 	Title:       "Validation error",
 	Description: "Please refer to the swagger documentation for the correct input data format",
@@ -39,13 +39,13 @@ var urlParamError = ApiError{
 	Description: "Please enter correct parameters or check the swagger documentation",
 }
 
-var notFoundError = ApiError{
+var NotFoundError = ApiError{
 	HttpStatus:  404,
 	Title:       "Not found",
 	Description: "That resource doesn't exist",
 }
 
-var largePayloadError = ApiError{
+var LargePayloadError = ApiError{
 	HttpStatus:  413,
 	Title:       "Payload too large",
 	Description: "The payload is too large - please reduce its size.",

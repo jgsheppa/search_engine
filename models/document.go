@@ -10,16 +10,13 @@ type RedisDB struct {
 	redisSearch redisearch.Client
 }
 
-type Article struct {
+type Document struct {
 	// Document name, if possible a UUID
 	Document string `json:"document"`
-	// Author of article
-	Author string `json:"author"`
-	ID     int    `json:"id"`
 	// URL of article
 	URL string `json:"url"`
 	// Title of article
-	Title string `json:"title"`
+	Text string `json:"title"`
 	// Topics of article
 	Topic string `json:"topic"`
 }
@@ -29,38 +26,36 @@ type Field struct {
 	Type string `json:"type"`
 }
 
-type Articles []Article
+type Documents []Document
 
-func CreateDocument(rs redisearch.Client, autoCompleter redisearch.Autocompleter, articles Articles) error {
-	var documents []redisearch.Document
+func (s *Services) CreateDocument(documents Documents) error {
+	var redisDocuments []redisearch.Document
 
-	for _, article := range articles {
-		suggestion := CreateSuggestions(article)
+	for _, document := range documents {
+		suggestion := CreateSuggestions(document)
 
-		err := autoCompleter.AddTerms(suggestion...)
+		err := s.Autocomplete.AddTerms(suggestion...)
 		if err != nil {
 			log.Println("Error adding term for autocomplete")
 		}
 
-		doc := redisearch.NewDocument(article.Document, 1.0)
-		doc.Set("author", article.Author).
-			Set("id", article.ID).
-			Set("title", article.Title).
-			Set("url", article.URL).
-			Set("topic", article.Topic).
+		doc := redisearch.NewDocument(document.Document, 1.0)
+		doc.Set("text", document.Text).
+			Set("url", document.URL).
+			Set("topic", document.Topic).
 			Set("date", time.Now().Unix())
-		documents = append(documents, doc)
+		redisDocuments = append(redisDocuments, doc)
 	}
 
 	// Index the document. The API accepts multiple documents at a time
-	if err := rs.Index(documents...); err != nil {
+	if err := s.Redisearch.Index(redisDocuments...); err != nil {
 		return err
 	}
 	return nil
 }
 
-func DeleteDocument(rs redisearch.Client, document string) error {
-	err := rs.DeleteDocument(document)
+func (s *Services) DeleteDocument(document string) error {
+	err := s.Redisearch.DeleteDocument(document)
 	if err != nil {
 		return err
 	}

@@ -5,34 +5,16 @@ import (
 	"strings"
 )
 
-func CreateSuggestions(article Article) []redisearch.Suggestion {
+func CreateSuggestions(document Document) []redisearch.Suggestion {
 	var suggestion []redisearch.Suggestion
 
-	splitTitle := strings.Split(article.Title, " ")
-	title := SuggestionFactory(splitTitle)
+	splitText := strings.Split(document.Text, " ")
+	title := SuggestionFactory(splitText)
 	suggestion = append(suggestion, title...)
 
-	splitAuthor := strings.Split(article.Author, " ")
-	author := SuggestionFactory(splitAuthor)
+	splitTopic := strings.Split(document.Topic, " ")
+	author := SuggestionFactory(splitTopic)
 	suggestion = append(suggestion, author...)
-
-	splitTopic := strings.Split(article.Topic, " ")
-	topic := SuggestionFactory(splitTopic)
-	suggestion = append(suggestion, topic...)
-
-	return suggestion
-}
-
-func CreateGuideSuggestions(guide Guide) []redisearch.Suggestion {
-	var suggestion []redisearch.Suggestion
-
-	splitTitle := strings.Split(guide.Text, " ")
-	title := SuggestionFactory(splitTitle)
-	suggestion = append(suggestion, title...)
-
-	splitTopic := strings.Split(guide.Topic, " ")
-	topic := SuggestionFactory(splitTopic)
-	suggestion = append(suggestion, topic...)
 
 	return suggestion
 }

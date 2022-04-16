@@ -20,7 +20,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/document/article": {
+        "/api/document": {
             "post": {
                 "tags": [
                     "Document"
@@ -35,7 +35,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Article"
+                                "$ref": "#/definitions/models.Document"
                             }
                         }
                     }
@@ -46,7 +46,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Article"
+                                "$ref": "#/definitions/models.Document"
                             }
                         }
                     },
@@ -91,7 +91,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/document/guide/{url}/{htmlTag}/{containerClass}": {
+        "/api/document/{url}/{htmlTag}/{containerClass}": {
             "post": {
                 "tags": [
                     "Document"
@@ -126,7 +126,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Guide"
+                                "$ref": "#/definitions/models.Document"
                             }
                         }
                     },
@@ -137,22 +137,6 @@ const docTemplate = `{
             }
         },
         "/api/index/create/articles": {
-            "post": {
-                "tags": [
-                    "Index"
-                ],
-                "summary": "Create Redis index for BestPracticer guides",
-                "responses": {
-                    "200": {
-                        "description": "Ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/index/create/guide": {
             "post": {
                 "tags": [
                     "Index"
@@ -195,65 +179,6 @@ const docTemplate = `{
                         "description": "Ok",
                         "schema": {
                             "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/search/guide/{term}": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Search"
-                ],
-                "summary": "Search Redisearch documents",
-                "operationId": "guide search",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search by keyword",
-                        "name": "term",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort by field",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Ascending?",
-                        "name": "ascending",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit number of results",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Ok",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.SwaggerSearchGuideResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.ApiError"
-                        }
-                    },
-                    "500": {
-                        "description": "Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.ApiError"
                         }
                     }
                 }
@@ -331,27 +256,6 @@ const docTemplate = `{
                 }
             }
         },
-        "controllers.SwaggerSearchGuideResponse": {
-            "type": "object",
-            "properties": {
-                "response": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/controllers.swaggerGuideResponse"
-                    }
-                },
-                "suggestion": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/controllers.swaggerSuggestion"
-                    }
-                },
-                "total": {
-                    "type": "integer",
-                    "example": 1
-                }
-            }
-        },
         "controllers.SwaggerSearchResponse": {
             "type": "object",
             "properties": {
@@ -370,30 +274,6 @@ const docTemplate = `{
                 "total": {
                     "type": "integer",
                     "example": 1
-                }
-            }
-        },
-        "controllers.swaggerGuideResponse": {
-            "type": "object",
-            "properties": {
-                "author": {
-                    "description": "Author of article",
-                    "type": "string",
-                    "example": "Goal Setting"
-                },
-                "date": {
-                    "type": "integer",
-                    "example": 1649762803
-                },
-                "topic": {
-                    "description": "Topics of article",
-                    "type": "string",
-                    "example": "Goal Setting"
-                },
-                "url": {
-                    "description": "URL of doc",
-                    "type": "string",
-                    "example": "www.guidebook.bestpracticer.com/goal-setting"
                 }
             }
         },
@@ -447,35 +327,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.Article": {
-            "type": "object",
-            "properties": {
-                "author": {
-                    "description": "Author of article",
-                    "type": "string"
-                },
-                "document": {
-                    "description": "Document name, if possible a UUID",
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "title": {
-                    "description": "Title of article",
-                    "type": "string"
-                },
-                "topic": {
-                    "description": "Topics of article",
-                    "type": "string"
-                },
-                "url": {
-                    "description": "URL of article",
-                    "type": "string"
-                }
-            }
-        },
-        "models.Guide": {
+        "models.Document": {
             "type": "object",
             "properties": {
                 "document": {
@@ -505,7 +357,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:3001",
 	BasePath:         "/",
 	Schemes:          []string{"http", "https"},
-	Title:            "BestPracticer Search Engine",
+	Title:            "Redisearch Search Engine",
 	Description:      "This is a search engine built with Redisearch",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

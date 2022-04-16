@@ -7,10 +7,10 @@ import (
 	"strings"
 )
 
-func ScrapeWebPage(url, htmlTag, containerClass string) models.Guides {
+func ScrapeWebPage(url, htmlTag, containerClass string) models.Documents {
 	var topic string
 	var subHeaders []string
-	var guides models.Guides
+	var guides models.Documents
 	baseUrl := "pkg.go.dev/"
 	wholeUrl := baseUrl + url
 
@@ -25,7 +25,7 @@ func ScrapeWebPage(url, htmlTag, containerClass string) models.Guides {
 
 	for i, header := range subHeaders {
 		headerWithoutEdit := strings.Split(header, "[")
-		guides = append(guides, models.Guide{
+		guides = append(guides, models.Document{
 			Document: topic + strconv.Itoa(i) + "header",
 			Text:     headerWithoutEdit[0],
 			Topic:    topic,

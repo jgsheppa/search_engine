@@ -29,23 +29,7 @@ func (rdb *RedisDB) DropIndex(w http.ResponseWriter, r *http.Request) {
 // @Router /api/index/create/articles [POST]
 func (rdb *RedisDB) CreateIndex(w http.ResponseWriter, r *http.Request) {
 	pool := rdb.Pool
-	_, _, err := models.CreateIndex(&pool, "articles")
-	if err != nil {
-		http.Error(w, "Index already exists", http.StatusNotFound)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, http.StatusOK, "Index successfully created")
-}
-
-// CreateGuideIndex godoc
-// @Summary Create Redis index for BestPracticer guides
-// @Tags Index
-// @Success 200 {string} string "Ok"
-// @Router /api/index/create/guide [POST]
-func (rdb *RedisDB) CreateGuideIndex(w http.ResponseWriter, r *http.Request) {
-	pool := rdb.Pool
-	_, _, err := models.CreateIndex(&pool, "guide")
+	_, _, err := models.CreateIndex(&pool, "index")
 	if err != nil {
 		http.Error(w, "Index already exists", http.StatusNotFound)
 		return

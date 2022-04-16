@@ -6,7 +6,7 @@
     "swagger": "2.0",
     "info": {
         "description": "This is a search engine built with Redisearch",
-        "title": "BestPracticer Search Engine",
+        "title": "Redisearch Search Engine",
         "contact": {},
         "license": {
             "name": "Apache 2.0",
@@ -17,7 +17,7 @@
     "host": "localhost:3001",
     "basePath": "/",
     "paths": {
-        "/api/document/article": {
+        "/api/document": {
             "post": {
                 "tags": [
                     "Document"
@@ -32,7 +32,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Article"
+                                "$ref": "#/definitions/models.Document"
                             }
                         }
                     }
@@ -43,7 +43,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Article"
+                                "$ref": "#/definitions/models.Document"
                             }
                         }
                     },
@@ -88,7 +88,7 @@
                 }
             }
         },
-        "/api/document/guide/{url}/{htmlTag}/{containerClass}": {
+        "/api/document/{url}/{htmlTag}/{containerClass}": {
             "post": {
                 "tags": [
                     "Document"
@@ -123,7 +123,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Guide"
+                                "$ref": "#/definitions/models.Document"
                             }
                         }
                     },
@@ -134,22 +134,6 @@
             }
         },
         "/api/index/create/articles": {
-            "post": {
-                "tags": [
-                    "Index"
-                ],
-                "summary": "Create Redis index for BestPracticer guides",
-                "responses": {
-                    "200": {
-                        "description": "Ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/index/create/guide": {
             "post": {
                 "tags": [
                     "Index"
@@ -192,65 +176,6 @@
                         "description": "Ok",
                         "schema": {
                             "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/search/guide/{term}": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Search"
-                ],
-                "summary": "Search Redisearch documents",
-                "operationId": "guide search",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search by keyword",
-                        "name": "term",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Sort by field",
-                        "name": "sort",
-                        "in": "query"
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "Ascending?",
-                        "name": "ascending",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit number of results",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Ok",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.SwaggerSearchGuideResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.ApiError"
-                        }
-                    },
-                    "500": {
-                        "description": "Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.ApiError"
                         }
                     }
                 }
@@ -328,27 +253,6 @@
                 }
             }
         },
-        "controllers.SwaggerSearchGuideResponse": {
-            "type": "object",
-            "properties": {
-                "response": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/controllers.swaggerGuideResponse"
-                    }
-                },
-                "suggestion": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/controllers.swaggerSuggestion"
-                    }
-                },
-                "total": {
-                    "type": "integer",
-                    "example": 1
-                }
-            }
-        },
         "controllers.SwaggerSearchResponse": {
             "type": "object",
             "properties": {
@@ -367,30 +271,6 @@
                 "total": {
                     "type": "integer",
                     "example": 1
-                }
-            }
-        },
-        "controllers.swaggerGuideResponse": {
-            "type": "object",
-            "properties": {
-                "author": {
-                    "description": "Author of article",
-                    "type": "string",
-                    "example": "Goal Setting"
-                },
-                "date": {
-                    "type": "integer",
-                    "example": 1649762803
-                },
-                "topic": {
-                    "description": "Topics of article",
-                    "type": "string",
-                    "example": "Goal Setting"
-                },
-                "url": {
-                    "description": "URL of doc",
-                    "type": "string",
-                    "example": "www.guidebook.bestpracticer.com/goal-setting"
                 }
             }
         },
@@ -444,35 +324,7 @@
                 }
             }
         },
-        "models.Article": {
-            "type": "object",
-            "properties": {
-                "author": {
-                    "description": "Author of article",
-                    "type": "string"
-                },
-                "document": {
-                    "description": "Document name, if possible a UUID",
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "title": {
-                    "description": "Title of article",
-                    "type": "string"
-                },
-                "topic": {
-                    "description": "Topics of article",
-                    "type": "string"
-                },
-                "url": {
-                    "description": "URL of article",
-                    "type": "string"
-                }
-            }
-        },
-        "models.Guide": {
+        "models.Document": {
             "type": "object",
             "properties": {
                 "document": {

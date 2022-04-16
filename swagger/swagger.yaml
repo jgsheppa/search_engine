@@ -7,20 +7,6 @@ definitions:
       title:
         type: string
     type: object
-  controllers.SwaggerSearchGuideResponse:
-    properties:
-      response:
-        items:
-          $ref: '#/definitions/controllers.swaggerGuideResponse'
-        type: array
-      suggestion:
-        items:
-          $ref: '#/definitions/controllers.swaggerSuggestion'
-        type: array
-      total:
-        example: 1
-        type: integer
-    type: object
   controllers.SwaggerSearchResponse:
     properties:
       response:
@@ -34,24 +20,6 @@ definitions:
       total:
         example: 1
         type: integer
-    type: object
-  controllers.swaggerGuideResponse:
-    properties:
-      author:
-        description: Author of article
-        example: Goal Setting
-        type: string
-      date:
-        example: 1649762803
-        type: integer
-      topic:
-        description: Topics of article
-        example: Goal Setting
-        type: string
-      url:
-        description: URL of doc
-        example: www.guidebook.bestpracticer.com/goal-setting
-        type: string
     type: object
   controllers.swaggerResponse:
     properties:
@@ -90,27 +58,7 @@ definitions:
         example: Pair
         type: string
     type: object
-  models.Article:
-    properties:
-      author:
-        description: Author of article
-        type: string
-      document:
-        description: Document name, if possible a UUID
-        type: string
-      id:
-        type: integer
-      title:
-        description: Title of article
-        type: string
-      topic:
-        description: Topics of article
-        type: string
-      url:
-        description: URL of article
-        type: string
-    type: object
-  models.Guide:
+  models.Document:
     properties:
       document:
         description: Document name, if possible a UUID
@@ -132,10 +80,10 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  title: BestPracticer Search Engine
+  title: Redisearch Search Engine
   version: "1.0"
 paths:
-  /api/document/article:
+  /api/document:
     post:
       parameters:
       - description: The body to create a Redis document for an article
@@ -144,19 +92,49 @@ paths:
         required: true
         schema:
           items:
-            $ref: '#/definitions/models.Article'
+            $ref: '#/definitions/models.Document'
           type: array
       responses:
         "201":
           description: Created
           schema:
             items:
-              $ref: '#/definitions/models.Article'
+              $ref: '#/definitions/models.Document'
             type: array
         "422":
           description: Unprocessable Entity
           schema:
             $ref: '#/definitions/controllers.ApiError'
+      summary: Post documents to Redisearch
+      tags:
+      - Document
+  /api/document/{url}/{htmlTag}/{containerClass}:
+    post:
+      parameters:
+      - description: URL path of guidebook
+        in: path
+        name: url
+        required: true
+        type: string
+      - description: HTML tag to scrape
+        in: path
+        name: htmlTag
+        required: true
+        type: string
+      - description: Class of container holding HTML tag
+        in: path
+        name: containerClass
+        required: true
+        type: string
+      responses:
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/models.Document'
+            type: array
+        "422":
+          description: ""
       summary: Post documents to Redisearch
       tags:
       - Document
@@ -181,47 +159,7 @@ paths:
       summary: Delete documents from Redisearch
       tags:
       - Document
-  /api/document/guide/{url}/{htmlTag}/{containerClass}:
-    post:
-      parameters:
-      - description: URL path of guidebook
-        in: path
-        name: url
-        required: true
-        type: string
-      - description: HTML tag to scrape
-        in: path
-        name: htmlTag
-        required: true
-        type: string
-      - description: Class of container holding HTML tag
-        in: path
-        name: containerClass
-        required: true
-        type: string
-      responses:
-        "201":
-          description: Created
-          schema:
-            items:
-              $ref: '#/definitions/models.Guide'
-            type: array
-        "422":
-          description: ""
-      summary: Post documents to Redisearch
-      tags:
-      - Document
   /api/index/create/articles:
-    post:
-      responses:
-        "200":
-          description: Ok
-          schema:
-            type: string
-      summary: Create Redis index for BestPracticer guides
-      tags:
-      - Index
-  /api/index/create/guide:
     post:
       responses:
         "200":
@@ -279,45 +217,6 @@ paths:
           description: Ok
           schema:
             $ref: '#/definitions/controllers.SwaggerSearchResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/controllers.ApiError'
-        "500":
-          description: Server Error
-          schema:
-            $ref: '#/definitions/controllers.ApiError'
-      summary: Search Redisearch documents
-      tags:
-      - Search
-  /api/search/guide/{term}:
-    get:
-      operationId: guide search
-      parameters:
-      - description: Search by keyword
-        in: path
-        name: term
-        required: true
-        type: string
-      - description: Sort by field
-        in: query
-        name: sort
-        type: string
-      - description: Ascending?
-        in: query
-        name: ascending
-        type: boolean
-      - description: Limit number of results
-        in: query
-        name: limit
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Ok
-          schema:
-            $ref: '#/definitions/controllers.SwaggerSearchGuideResponse'
         "404":
           description: Not Found
           schema:

@@ -49,7 +49,7 @@ func main() {
 	r.HandleFunc("/", controllers.DisplayAPIRoutes).Methods("GET")
 	// Document routes
 	r.HandleFunc("/api/document", searchController.PostDocuments).Methods("POST")
-	r.HandleFunc("/api/document/docs/{url}/{htmlTag}/{containerClass}", searchController.PostScrapedDocuments).Methods("POST")
+	r.HandleFunc("/api/document/{url}/{htmlTag}/{containerClass}", searchController.PostScrapedDocuments).Methods("POST")
 	r.HandleFunc("/api/document/delete/{documentName}", searchController.DeleteDocument).Methods("DELETE")
 	// Index routes
 	r.HandleFunc("/api/index/delete", searchController.DropIndex).Methods("DELETE")

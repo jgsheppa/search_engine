@@ -15,7 +15,7 @@ type Document struct {
 	// URL of article
 	URL string `json:"url"`
 	// Title of article
-	Text string `json:"title"`
+	Text string `json:"text"`
 	// Topics of article
 	Topic string `json:"topic"`
 }

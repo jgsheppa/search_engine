@@ -9,12 +9,12 @@ func CreateSuggestions(document Document) []redisearch.Suggestion {
 	var suggestion []redisearch.Suggestion
 
 	splitText := strings.Split(document.Text, " ")
-	title := SuggestionFactory(splitText)
-	suggestion = append(suggestion, title...)
+	text := SuggestionFactory(splitText)
+	suggestion = append(suggestion, text...)
 
 	splitTopic := strings.Split(document.Topic, " ")
-	author := SuggestionFactory(splitTopic)
-	suggestion = append(suggestion, author...)
+	topic := SuggestionFactory(splitTopic)
+	suggestion = append(suggestion, topic...)
 
 	return suggestion
 }

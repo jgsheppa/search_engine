@@ -157,7 +157,7 @@ paths:
       summary: Delete documents from Redisearch
       tags:
       - Document
-  /api/index/create/articles:
+  /api/index/create:
     post:
       responses:
         "200":

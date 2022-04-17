@@ -5,16 +5,14 @@ import (
 )
 
 var expectedResult = [12]string{"On Pair", "On", "On Pair Programming", "Pair Programming",
-	"Pair", "Programming", "The Dude", "The", "Dude", "New Topic", "New", "Topic"}
+	"Pair", "Programming", "New Topic", "New", "Topic"}
 
 func TestCreateSuggestions(t *testing.T) {
 
-	article := Article{
+	article := Document{
 		Document: "article1",
-		Author:   "The Dude",
-		ID:       1,
+		Text:     "On Pair Programming",
 		URL:      "www.npr.org",
-		Title:    "On Pair Programming",
 		Topic:    "New Topic",
 	}
 

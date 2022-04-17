@@ -139,7 +139,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/index/create/articles": {
+        "/api/index/create": {
             "post": {
                 "tags": [
                     "Index"

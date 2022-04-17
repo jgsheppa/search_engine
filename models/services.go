@@ -13,7 +13,7 @@ func NewServices() (*Services, error) {
 	client := pool.Get()
 	defer client.Close()
 
-	c, autocomplete, err := CreateIndex(pool, "articles")
+	c, autocomplete, err := CreateIndex(pool, "index")
 	if err != nil {
 		log.Println(err)
 	}

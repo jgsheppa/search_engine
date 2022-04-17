@@ -25,7 +25,6 @@ func (s *Services) SearchAndSuggest(
 	term,
 	sortBy string,
 ) (SearchResponse, error) {
-
 	// Searching with limit and sorting
 	docs, total, err := s.Redisearch.Search(redisearch.NewQuery(term).
 		Limit(0, limit).
@@ -43,7 +42,6 @@ func (s *Services) SearchAndSuggest(
 	var auto []redisearch.Suggestion
 
 	if len(response) == 0 {
-
 		opts := redisearch.SuggestOptions{
 			Num:          5,
 			Fuzzy:        false,

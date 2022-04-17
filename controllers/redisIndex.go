@@ -25,7 +25,7 @@ func (rdb *RedisDB) DropIndex(w http.ResponseWriter, r *http.Request) {
 // @Summary Create Redis index for BestPracticer guides
 // @Tags Index
 // @Success 200 {string} string "Ok"
-// @Router /api/index/create/articles [POST]
+// @Router /api/index/create [POST]
 func (rdb *RedisDB) CreateIndex(w http.ResponseWriter, r *http.Request) {
 	pool := rdb.Pool
 	_, _, err := models.CreateIndex(&pool, "index")

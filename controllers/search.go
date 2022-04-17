@@ -55,7 +55,7 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 		isAscending = false
 	}
 
-	highlighted := []string{"title", "author", "topic"}
+	highlighted := []string{"text", "topic"}
 
 	result, err := rdb.s.SearchAndSuggest(isAscending, queryLimit, highlighted, term, sortBy)
 	if err != nil {

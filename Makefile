@@ -11,7 +11,7 @@ docs:
 	swag init -g ./main.go -o ./swagger
 
 test_data:
-	curl -X POST -H "Content-Type: application/json" -d @./test_data.json http://localhost:3000/api/document/article
+	curl -X POST -H "Content-Type: application/json" -d @./cities.json http://localhost:3001/api/document
 
 prod_data:
 	curl -X POST -H "Content-Type: application/json" -d @./test_data.json \

@@ -8,12 +8,12 @@ import (
 func CreateSuggestions(document Document) []redisearch.Suggestion {
 	var suggestion []redisearch.Suggestion
 
-	splitText := strings.Split(document.Text, " ")
-	text := SuggestionFactory(splitText)
+	splitCountry := strings.Split(document.Country, " ")
+	text := SuggestionFactory(splitCountry)
 	suggestion = append(suggestion, text...)
 
-	splitTopic := strings.Split(document.Topic, " ")
-	topic := SuggestionFactory(splitTopic)
+	splitCity := strings.Split(document.Name, " ")
+	topic := SuggestionFactory(splitCity)
 	suggestion = append(suggestion, topic...)
 
 	return suggestion
@@ -21,6 +21,10 @@ func CreateSuggestions(document Document) []redisearch.Suggestion {
 
 func SuggestionFactory(wordArray []string) []redisearch.Suggestion {
 	var suggestion []redisearch.Suggestion
+
+	var score float64
+	score = 100
+	incr := false
 
 	for index, word := range wordArray {
 		wordArrayLength := len(wordArray) - 1
@@ -31,9 +35,9 @@ func SuggestionFactory(wordArray []string) []redisearch.Suggestion {
 			// Add single word as suggestion
 			suggestion = append(suggestion, redisearch.Suggestion{
 				Term:    word,
-				Score:   100,
+				Score:   score,
 				Payload: word,
-				Incr:    false,
+				Incr:    incr,
 			})
 
 			return suggestion
@@ -43,9 +47,9 @@ func SuggestionFactory(wordArray []string) []redisearch.Suggestion {
 		stringPortion := strings.Join(wordArray[:limit], " ")
 		suggestion = append(suggestion, redisearch.Suggestion{
 			Term:    stringPortion,
-			Score:   100,
+			Score:   score,
 			Payload: stringPortion,
-			Incr:    false,
+			Incr:    incr,
 		})
 
 		if index > 0 {
@@ -53,18 +57,18 @@ func SuggestionFactory(wordArray []string) []redisearch.Suggestion {
 			stringPortion = strings.Join(wordArray[index:limit], " ")
 			suggestion = append(suggestion, redisearch.Suggestion{
 				Term:    stringPortion,
-				Score:   100,
+				Score:   score,
 				Payload: stringPortion,
-				Incr:    false,
+				Incr:    incr,
 			})
 		}
 
 		// Add single word as suggestion
 		suggestion = append(suggestion, redisearch.Suggestion{
 			Term:    word,
-			Score:   100,
+			Score:   score,
 			Payload: word,
-			Incr:    false,
+			Incr:    incr,
 		})
 	}
 

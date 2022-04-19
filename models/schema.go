@@ -9,10 +9,10 @@ import (
 // which will allow you to add your data in the form of these documents
 func CreateSchema() *redisearch.Schema {
 	sc := redisearch.NewSchema(redisearch.DefaultOptions).
-		AddField(redisearch.NewNumericField("date")).
-		AddField(redisearch.NewTextFieldOptions("text", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
-		AddField(redisearch.NewTextFieldOptions("url", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
-		AddField(redisearch.NewTextFieldOptions("topic", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true}))
+		AddField(redisearch.NewNumericField("id")).
+		AddField(redisearch.NewTextFieldOptions("country", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
+		AddField(redisearch.NewTextFieldOptions("city", redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
+		AddField(redisearch.NewGeoField("location"))
 	return sc
 }
 

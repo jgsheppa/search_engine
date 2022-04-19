@@ -89,3 +89,23 @@ func (s *Services) SearchAndSuggest(
 	}
 
 }
+
+func (s *Services) GeoSearch() []redisearch.Document {
+	// Todo: Get document by name and look up location that way
+	// Searching for 100KM radius should only output Catania
+	docs, _, _ := s.Redisearch.Search(redisearch.NewQuery("*").AddFilter(
+		redisearch.Filter{
+			Field: "location",
+			Options: redisearch.GeoFilterOptions{
+				Lon:    48.20849,
+				Lat:    16.37208,
+				Radius: 20,
+				Unit:   redisearch.KILOMETERS,
+			},
+		},
+	).
+		Limit(0, 30).
+		SetSortBy("city", true))
+
+	return docs
+}

@@ -10,10 +10,8 @@ var expectedResult = [12]string{"On Pair", "On", "On Pair Programming", "Pair Pr
 func TestCreateSuggestions(t *testing.T) {
 
 	article := Document{
-		Document: "article1",
-		Text:     "On Pair Programming",
-		URL:      "www.npr.org",
-		Topic:    "New Topic",
+		Country: "On Pair Programming",
+		Name:    "New Topic",
 	}
 
 	t.Run("suggestion output", func(t *testing.T) {

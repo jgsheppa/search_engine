@@ -3,7 +3,6 @@ package scraper
 import (
 	"github.com/gocolly/colly/v2"
 	"github.com/jgsheppa/search_engine/models"
-	"strconv"
 )
 
 func ScrapeWebPage(url, htmlTag, containerClass string) models.Documents {
@@ -23,14 +22,14 @@ func ScrapeWebPage(url, htmlTag, containerClass string) models.Documents {
 
 	})
 	c.Visit(wholeUrl)
-	for i, header := range subHeaders {
-		guides = append(guides, models.Document{
-			Document: topic + ":header:" + strconv.Itoa(i),
-			Text:     header,
-			Topic:    topic,
-			URL:      wholeUrl + "#" + header,
-		})
-	}
+	//for i, header := range subHeaders {
+	//	guides = append(guides, models.Document{
+	//		Document: topic + ":header:" + strconv.Itoa(i),
+	//		Text:     header,
+	//		Topic:    topic,
+	//		URL:      wholeUrl + "#" + header,
+	//	})
+	//}
 
 	return guides
 }

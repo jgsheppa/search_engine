@@ -171,6 +171,44 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/search/geo": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "GeoSearch"
+                ],
+                "summary": "Search Redisearch documents",
+                "operationId": "article geo-search",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search by keyword",
+                        "name": "term",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiError"
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ApiError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/search/{term}": {
             "get": {
                 "produces": [
@@ -246,20 +284,20 @@ const docTemplate = `{
         "models.Document": {
             "type": "object",
             "properties": {
-                "document": {
-                    "description": "Document name, if possible a UUID",
-                    "type": "string"
-                },
-                "title": {
-                    "description": "Title of article",
-                    "type": "string"
-                },
-                "topic": {
-                    "description": "Topics of article",
-                    "type": "string"
-                },
-                "url": {
+                "country": {
                     "description": "URL of article",
+                    "type": "string"
+                },
+                "lat": {
+                    "description": "Latitude of city",
+                    "type": "string"
+                },
+                "lng": {
+                    "description": "Longitude of city",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Title of article",
                     "type": "string"
                 }
             }
@@ -267,24 +305,20 @@ const docTemplate = `{
         "swagger.SwaggerResponse": {
             "type": "object",
             "properties": {
-                "author": {
+                "country": {
                     "description": "Author of article",
                     "type": "string",
-                    "example": "Goal Setting"
+                    "example": "Austria"
                 },
-                "date": {
-                    "type": "integer",
-                    "example": 1649762803
-                },
-                "topic": {
+                "location": {
                     "description": "Topics of article",
                     "type": "string",
-                    "example": "Goal Setting"
+                    "example": "48.20849,16.37208"
                 },
-                "url": {
+                "name": {
                     "description": "URL of doc",
                     "type": "string",
-                    "example": "www.guidebook.bestpracticer.com/goal-setting"
+                    "example": "Wien"
                 }
             }
         },

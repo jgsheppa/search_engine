@@ -55,6 +55,9 @@ func main() {
 	r.HandleFunc("/api/index/delete", searchController.DropIndex).Methods("DELETE")
 	r.HandleFunc("/api/index/create", searchController.CreateIndex).Methods("POST")
 
+	// GeoSearch routes
+	r.HandleFunc("/api/search/geo", searchController.GeoSearch).Methods("GET")
+
 	// Search routes
 	r.HandleFunc("/api/search/{term}", searchController.Search).Methods("GET")
 	r.HandleFunc("/api/search/{term}", searchController.Search).

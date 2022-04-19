@@ -50,16 +50,18 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		json.NewEncoder(w).Encode(models.LargePayloadError)
+		return
 	}
 	if err := r.Body.Close(); err != nil {
 		json.NewEncoder(w).Encode(err)
+		return
 	}
 	if err := json.Unmarshal(body, &documents); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(models.ValidationError); err != nil {
-			fmt.Fprintln(w, models.ValidationError)
-		}
+		json.NewEncoder(w).Encode(1)
+		json.NewEncoder(w).Encode(models.ValidationError)
+		return
 	}
 
 	err = rdb.s.CreateDocument(documents)
@@ -68,9 +70,10 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusCreated)
 	if err := json.NewEncoder(w).Encode(documents); err != nil {
+		json.NewEncoder(w).Encode(err)
 		json.NewEncoder(w).Encode(models.ValidationError)
+		return
 	}
 	fmt.Fprintln(w, "Document successfully uploaded")
 }

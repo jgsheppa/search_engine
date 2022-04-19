@@ -39,13 +39,14 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 	if len(limit) > 0 {
 		limitAsInt, err := strconv.Atoi(limit)
 		if err != nil {
+			json.NewEncoder(w).Encode(err)
 			json.NewEncoder(w).Encode(models.ValidationError)
 			return
 		}
 		queryLimit = limitAsInt
 	}
 
-	sortBy := "date"
+	sortBy := "city"
 	if len(sort) > 0 {
 		sortBy = sort
 	}
@@ -55,12 +56,28 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 		isAscending = false
 	}
 
-	highlighted := []string{"text", "topic"}
+	highlighted := []string{"city"}
 
 	result, err := rdb.s.SearchAndSuggest(isAscending, queryLimit, highlighted, term, sortBy)
 	if err != nil {
+		json.NewEncoder(w).Encode(err)
 		json.NewEncoder(w).Encode(models.ValidationError)
 		return
 	}
 	json.NewEncoder(w).Encode(result)
+}
+
+// GeoSearch godoc
+// @Summary Search Redisearch documents
+// @Tags GeoSearch
+// @ID article geo-search
+// @Param term path string true "Search by keyword"
+// @Produce json
+// @Success 200
+// @Failure 404 {object} models.ApiError "Not Found"
+// @Failure 500 {object} models.ApiError "Server Error"
+// @Router /api/search/geo [get]
+func (rdb *RedisDB) GeoSearch(w http.ResponseWriter, r *http.Request) {
+	docs := rdb.s.GeoSearch()
+	json.NewEncoder(w).Encode(docs)
 }

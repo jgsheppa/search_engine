@@ -9,35 +9,32 @@ definitions:
     type: object
   models.Document:
     properties:
-      document:
-        description: Document name, if possible a UUID
-        type: string
-      title:
-        description: Title of article
-        type: string
-      topic:
-        description: Topics of article
-        type: string
-      url:
+      country:
         description: URL of article
+        type: string
+      lat:
+        description: Latitude of city
+        type: string
+      lng:
+        description: Longitude of city
+        type: string
+      name:
+        description: Title of article
         type: string
     type: object
   swagger.SwaggerResponse:
     properties:
-      author:
+      country:
         description: Author of article
-        example: Goal Setting
+        example: Austria
         type: string
-      date:
-        example: 1649762803
-        type: integer
-      topic:
+      location:
         description: Topics of article
-        example: Goal Setting
+        example: 48.20849,16.37208
         type: string
-      url:
+      name:
         description: URL of doc
-        example: www.guidebook.bestpracticer.com/goal-setting
+        example: Wien
         type: string
     type: object
   swagger.SwaggerSearchResponse:
@@ -216,6 +213,31 @@ paths:
       summary: Search Redisearch documents
       tags:
       - Search
+  /api/search/geo:
+    get:
+      operationId: article geo-search
+      parameters:
+      - description: Search by keyword
+        in: path
+        name: term
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/models.ApiError'
+        "500":
+          description: Server Error
+          schema:
+            $ref: '#/definitions/models.ApiError'
+      summary: Search Redisearch documents
+      tags:
+      - GeoSearch
 schemes:
 - http
 - https

@@ -5,7 +5,25 @@ services:
     image: "redis/redis-stack:latest"
     ports:
       - "6379:6379"
+    env_file:
+      - config.yaml
     deploy:
       replicas: 1
       restart_policy:
         condition: on-failure
+#  api:
+#    container_name: api
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    env_file: config.yaml
+#    ports:
+#      - "3001:3001"
+#    depends_on:
+#      - redis
+#    networks:
+#      - default
+#    deploy:
+#      replicas: 1
+#      restart_policy:
+#        condition: on-failure

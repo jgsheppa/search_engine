@@ -1,4 +1,7 @@
 run:
+	go run main.go
+
+docker-run:
 	docker run --publish 3000:3000 docker-build:latest
 
 build:

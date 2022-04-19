@@ -1,13 +1,15 @@
 package models
 
 import (
+	"fmt"
 	"github.com/RediSearch/redisearch-go/redisearch"
+	"strconv"
 )
 
 type SearchResponse struct {
-	Total      int                      `json:"total"`
-	Response   []map[string]interface{} `json:"response"`
-	Suggestion []redisearch.Suggestion  `json:"suggestion"`
+	Total      int                     `json:"total"`
+	Response   []redisearch.Document   `json:"response"`
+	Suggestion []redisearch.Suggestion `json:"suggestion"`
 }
 
 type SearchService interface {
@@ -34,9 +36,10 @@ func (s *Services) SearchAndSuggest(
 		return SearchResponse{}, err
 	}
 
-	var response []map[string]interface{}
+	var response []redisearch.Document
+
 	for _, doc := range docs {
-		response = append(response, doc.Properties)
+		response = append(response, doc)
 	}
 
 	var auto []redisearch.Suggestion
@@ -54,17 +57,20 @@ func (s *Services) SearchAndSuggest(
 		}
 
 		if len(auto) > 0 {
-			docs, total, err := s.Redisearch.Search(redisearch.NewQuery(auto[0].Payload).
-				Limit(0, limit).
-				Highlight(highlightedFields, "<b>", "</b>").
-				SetSortBy(sortBy, order))
+			total := 0
+			for _, suggestion := range auto {
+				docs, total, err = s.Redisearch.Search(redisearch.NewQuery(suggestion.Payload).
+					Limit(0, limit).
+					Highlight(highlightedFields, "<b>", "</b>").
+					SetSortBy(sortBy, order))
 
-			if err != nil {
-				return SearchResponse{}, err
-			}
+				if err != nil {
+					return SearchResponse{}, err
+				}
 
-			for _, doc := range docs {
-				response = append(response, doc.Properties)
+				for _, doc := range docs {
+					response = append(response, doc)
+				}
 			}
 
 			result := SearchResponse{
@@ -90,22 +96,27 @@ func (s *Services) SearchAndSuggest(
 
 }
 
-func (s *Services) GeoSearch() []redisearch.Document {
-	// Todo: Get document by name and look up location that way
-	// Searching for 100KM radius should only output Catania
+func (s *Services) GeoSearch(
+	longitude, latitude, radius string, limit int) []redisearch.Document {
+
+	long, _ := strconv.ParseFloat(longitude, 64)
+	lat, err := strconv.ParseFloat(latitude, 64)
+	rad, err := strconv.ParseFloat(radius, 64)
+	if err != nil {
+		fmt.Println(err)
+	}
+	// Searching for radius of city
 	docs, _, _ := s.Redisearch.Search(redisearch.NewQuery("*").AddFilter(
 		redisearch.Filter{
 			Field: "location",
 			Options: redisearch.GeoFilterOptions{
-				Lon:    48.20849,
-				Lat:    16.37208,
-				Radius: 20,
+				Lon:    long,
+				Lat:    lat,
+				Radius: rad,
 				Unit:   redisearch.KILOMETERS,
 			},
 		},
-	).
-		Limit(0, 30).
-		SetSortBy("city", true))
+	).Limit(0, limit).SetSortBy("location", true))
 
 	return docs
 }

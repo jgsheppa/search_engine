@@ -49,40 +49,44 @@ func main() {
 	r.HandleFunc("/", controllers.DisplayAPIRoutes).Methods("GET")
 	// Document routes
 	r.HandleFunc("/api/document", searchController.PostDocuments).Methods("POST")
-	r.HandleFunc("/api/document/{url}/{htmlTag}/{containerClass}", searchController.PostScrapedDocuments).Methods("POST")
 	r.HandleFunc("/api/document/delete/{documentName}", searchController.DeleteDocument).Methods("DELETE")
 	// Index routes
 	r.HandleFunc("/api/index/delete", searchController.DropIndex).Methods("DELETE")
 	r.HandleFunc("/api/index/create", searchController.CreateIndex).Methods("POST")
 
-	// GeoSearch routes
-	r.HandleFunc("/api/search/geo", searchController.GeoSearch).Methods("GET")
+	// Search routes
+	r.HandleFunc("/api/search/geo", searchController.GeoSearch).
+		Queries("longitude", "{longitude}").
+		Queries("latitude", "{latitude}").
+		Queries("radius", "{radius}").
+		Queries("limit", "{limit}").
+		Methods("GET")
 
 	// Search routes
-	r.HandleFunc("/api/search/{term}", searchController.Search).Methods("GET")
+	r.HandleFunc("/api/search/{term}", searchController.Search).Methods("GET", "OPTIONS")
 	r.HandleFunc("/api/search/{term}", searchController.Search).
 		Queries("limit", "{limit}").
-		Methods("GET")
+		Methods("GET", "OPTIONS")
 	r.HandleFunc("/api/search/{term}", searchController.Search).
 		Queries("ascending", "{ascending}").
-		Methods("GET")
+		Methods("GET", "OPTIONS")
 	r.HandleFunc("/api/search/{term}", searchController.Search).
 		Queries("sort", "{sort}").
-		Methods("GET")
+		Methods("GET", "OPTIONS")
 	r.HandleFunc("/api/search/{term}", searchController.Search).
 		Queries("sort", "{sort}").
-		Queries("ascending", "{ascending}").Methods("GET")
+		Queries("ascending", "{ascending}").Methods("GET", "OPTIONS")
 	r.HandleFunc("/api/search/{term}", searchController.Search).
 		Queries("sort", "{sort}").
-		Queries("limit", "{limit}").Methods("GET")
+		Queries("limit", "{limit}").Methods("GET", "OPTIONS")
 	r.HandleFunc("/api/search/{term}", searchController.Search).
 		Queries("limit", "{limit}").
-		Queries("ascending", "{ascending}").Methods("GET")
+		Queries("ascending", "{ascending}").Methods("GET", "OPTIONS")
 	r.HandleFunc("/api/search/{term}", searchController.Search).
 		Queries("sort", "{sort}").
 		Queries("ascending", "{ascending}").
 		Queries("limit", "{limit}").
-		Methods("GET")
+		Methods("GET", "OPTIONS")
 
 	// HandlerFunc converts notFound to the correct type
 	r.NotFoundHandler = http.HandlerFunc(models.NotFound)

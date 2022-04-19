@@ -7,7 +7,6 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
 	"github.com/jgsheppa/search_engine/models"
-	"github.com/jgsheppa/search_engine/scraper"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -74,34 +73,6 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(err)
 		json.NewEncoder(w).Encode(models.ValidationError)
 		return
-	}
-	fmt.Fprintln(w, "Document successfully uploaded")
-}
-
-// PostScrapedDocuments godoc
-// @Summary Post documents to Redisearch
-// @Tags Document
-// @Param url path string true "URL path of guidebook"
-// @Param htmlTag path string true "HTML tag to scrape"
-// @Param containerClass path string true "Class of container holding HTML tag"
-// @Success 201 {object} models.Documents
-// @Failure 422 {object} models.ApiError
-// @Router /api/document/{url}/{htmlTag}/{containerClass} [post]
-func (rdb *RedisDB) PostScrapedDocuments(w http.ResponseWriter, r *http.Request) {
-	url := mux.Vars(r)["url"]
-	htmlTag := mux.Vars(r)["htmlTag"]
-	containerClass := mux.Vars(r)["containerClass"]
-	documents := scraper.ScrapeWebPage(url, htmlTag, containerClass)
-
-	err := rdb.s.CreateDocument(documents)
-	if err != nil {
-		json.NewEncoder(w).Encode(err)
-	}
-
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(documents); err != nil {
-		json.NewEncoder(w).Encode(models.ValidationError)
 	}
 	fmt.Fprintln(w, "Document successfully uploaded")
 }

@@ -101,38 +101,6 @@ paths:
       summary: Post documents to Redisearch
       tags:
       - Document
-  /api/document/{url}/{htmlTag}/{containerClass}:
-    post:
-      parameters:
-      - description: URL path of guidebook
-        in: path
-        name: url
-        required: true
-        type: string
-      - description: HTML tag to scrape
-        in: path
-        name: htmlTag
-        required: true
-        type: string
-      - description: Class of container holding HTML tag
-        in: path
-        name: containerClass
-        required: true
-        type: string
-      responses:
-        "201":
-          description: Created
-          schema:
-            items:
-              $ref: '#/definitions/models.Document'
-            type: array
-        "422":
-          description: Unprocessable Entity
-          schema:
-            $ref: '#/definitions/models.ApiError'
-      summary: Post documents to Redisearch
-      tags:
-      - Document
   /api/document/delete/{documentName}:
     delete:
       operationId: documentName
@@ -195,6 +163,10 @@ paths:
         in: query
         name: limit
         type: integer
+      - description: Is it a geo query
+        in: query
+        name: geo
+        type: boolean
       produces:
       - application/json
       responses:
@@ -215,18 +187,34 @@ paths:
       - Search
   /api/search/geo:
     get:
-      operationId: article geo-search
+      operationId: country geo search
       parameters:
-      - description: Search by keyword
-        in: path
-        name: term
+      - description: Longitude
+        in: query
+        name: longitude
         required: true
         type: string
+      - description: Latitude
+        in: query
+        name: latitude
+        required: true
+        type: string
+      - description: Radius
+        in: query
+        name: radius
+        required: true
+        type: string
+      - description: Limit number of results
+        in: query
+        name: limit
+        type: integer
       produces:
       - application/json
       responses:
         "200":
-          description: ""
+          description: Ok
+          schema:
+            $ref: '#/definitions/swagger.SwaggerSearchResponse'
         "404":
           description: Not Found
           schema:
@@ -237,7 +225,7 @@ paths:
             $ref: '#/definitions/models.ApiError'
       summary: Search Redisearch documents
       tags:
-      - GeoSearch
+      - Search
 schemes:
 - http
 - https

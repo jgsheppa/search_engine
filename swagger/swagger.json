@@ -88,54 +88,6 @@
                 }
             }
         },
-        "/api/document/{url}/{htmlTag}/{containerClass}": {
-            "post": {
-                "tags": [
-                    "Document"
-                ],
-                "summary": "Post documents to Redisearch",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "URL path of guidebook",
-                        "name": "url",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "HTML tag to scrape",
-                        "name": "htmlTag",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Class of container holding HTML tag",
-                        "name": "containerClass",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Document"
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiError"
-                        }
-                    }
-                }
-            }
-        },
         "/api/index/create": {
             "post": {
                 "tags": [
@@ -174,22 +126,45 @@
                     "application/json"
                 ],
                 "tags": [
-                    "GeoSearch"
+                    "Search"
                 ],
                 "summary": "Search Redisearch documents",
-                "operationId": "article geo-search",
+                "operationId": "country geo search",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Search by keyword",
-                        "name": "term",
-                        "in": "path",
+                        "description": "Longitude",
+                        "name": "longitude",
+                        "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Latitude",
+                        "name": "latitude",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Radius",
+                        "name": "radius",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit number of results",
+                        "name": "limit",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": ""
+                        "description": "Ok",
+                        "schema": {
+                            "$ref": "#/definitions/swagger.SwaggerSearchResponse"
+                        }
                     },
                     "404": {
                         "description": "Not Found",
@@ -240,6 +215,12 @@
                         "type": "integer",
                         "description": "Limit number of results",
                         "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Is it a geo query",
+                        "name": "geo",
                         "in": "query"
                     }
                 ],

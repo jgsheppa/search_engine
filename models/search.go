@@ -1,9 +1,7 @@
 package models
 
 import (
-	"fmt"
 	"github.com/RediSearch/redisearch-go/redisearch"
-	"strconv"
 )
 
 type SearchResponse struct {
@@ -99,24 +97,24 @@ func (s *Services) SearchAndSuggest(
 func (s *Services) GeoSearch(
 	longitude, latitude, radius string, limit int) []redisearch.Document {
 
-	long, _ := strconv.ParseFloat(longitude, 64)
-	lat, err := strconv.ParseFloat(latitude, 64)
-	rad, err := strconv.ParseFloat(radius, 64)
-	if err != nil {
-		fmt.Println(err)
-	}
+	//long, _ := strconv.ParseFloat(longitude, 64)
+	//lat, err := strconv.ParseFloat(latitude, 64)
+	//rad, err := strconv.ParseFloat(radius, 64)
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
 	// Searching for radius of city
 	docs, _, _ := s.Redisearch.Search(redisearch.NewQuery("*").AddFilter(
 		redisearch.Filter{
 			Field: "location",
 			Options: redisearch.GeoFilterOptions{
-				Lon:    long,
-				Lat:    lat,
-				Radius: rad,
+				Lon:    42,
+				Lat:    -71,
+				Radius: 100,
 				Unit:   redisearch.KILOMETERS,
 			},
 		},
-	).Limit(0, limit).SetSortBy("location", true))
+	))
 
 	return docs
 }

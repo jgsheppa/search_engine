@@ -10,3 +10,5 @@ data
 
 # Go binary
 search_engine
+
+cities.json

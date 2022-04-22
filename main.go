@@ -57,9 +57,12 @@ func main() {
 	swagger.SwaggerInfo.BasePath = "/"
 	swagger.SwaggerInfo.Schemes = []string{httpProtocol}
 
-	userMw := middleware.RequireUser{
+	userMw := middleware.User{
 		UserService: services.User,
 	}
+	//requireUserMw := middleware.RequireUser{
+	//	User: userMw,
+	//}
 
 	r := mux.NewRouter()
 	searchController := controllers.NewDocuments(*services)
@@ -67,7 +70,7 @@ func main() {
 
 	// Auth
 	r.HandleFunc("/api/auth/login", authController.Login).Methods("POST")
-	r.HandleFunc("/api/auth/logout", authController.Logout).Methods("POST")
+	r.HandleFunc("/api/auth/logout", userMw.ApplyFn(authController.Logout)).Methods("POST")
 	// Swagger routes
 	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 	r.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger", http.FileServer(http.Dir("swagger"))))

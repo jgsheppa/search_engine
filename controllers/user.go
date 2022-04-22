@@ -72,6 +72,7 @@ func (u *User) signIn(w http.ResponseWriter, user *models.User) error {
 
 	cookie := http.Cookie{
 		Name:     "remember_token",
+		Path:     "/",
 		Value:    user.Remember,
 		HttpOnly: true,
 		Secure:   true,
@@ -128,21 +129,21 @@ func (u *User) Login(w http.ResponseWriter, r *http.Request) {
 // @Failure 401 {object} models.ApiError
 // @Router /api/auth/logout [post]
 func (u *User) Logout(w http.ResponseWriter, r *http.Request) {
+	user := context.User(r.Context())
+	if user == nil {
+		json.NewEncoder(w).Encode(models.AuthError)
+		return
+	}
+
 	cookie := http.Cookie{
 		Name:     "remember_token",
 		Value:    "",
+		Path:     "/",
 		Expires:  time.Now(),
 		HttpOnly: true,
 		Secure:   true,
 	}
 	http.SetCookie(w, &cookie)
-
-	user := context.User(r.Context())
-	if user == nil {
-		json.NewEncoder(w).Encode(models.AuthError)
-		w.WriteHeader(models.AuthError.HttpStatus)
-		return
-	}
 
 	token, _ := rand.RememberToken()
 	user.Remember = token
@@ -151,6 +152,8 @@ func (u *User) Logout(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(http.StatusInternalServerError)
 		w.WriteHeader(http.StatusInternalServerError)
 	}
+
+	user = context.User(r.Context())
 
 	fmt.Fprintln(w, http.StatusOK, "Logout successful")
 }

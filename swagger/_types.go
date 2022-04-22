@@ -9,11 +9,11 @@ type SwaggerSuggestion struct {
 
 type SwaggerResponse struct {
 	// Author of article
-	Country string `json:"country" example:"Austria"`
+	Link string `json:"link" example:"https://www.nba.com"`
 	// URL of doc
-	Name string `json:"name" example:"Wien"`
+	Name string `json:"name" example:"Michael Jordan"`
 	// Topics of article
-	Location string `json:"location" example:"48.20849,16.37208"`
+	Active string `json:"active" example:"1985-2003"`
 }
 
 type SwaggerSearchResponse struct {

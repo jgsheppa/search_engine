@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/RediSearch/redisearch-go/redisearch"
-	"strconv"
 )
 
 type RedisDB struct {
@@ -10,14 +9,12 @@ type RedisDB struct {
 }
 
 type Document struct {
-	// URL of article
-	Country string `json:"country"`
 	// Title of article
 	Name string `json:"name"`
 	// Latitude of city
-	Lat string `json:"lat"`
+	Link string `json:"link"`
 	// Longitude of city
-	Long string `json:"lng"`
+	Active string `json:"active"`
 }
 
 type Field struct {
@@ -30,7 +27,7 @@ type Documents []Document
 func (s *Services) CreateDocument(documents Documents) error {
 	var redisDocuments []redisearch.Document
 
-	for i, document := range documents {
+	for _, document := range documents {
 		suggestion := CreateSuggestions(document)
 
 		err := s.Autocomplete.AddTerms(suggestion...)
@@ -38,11 +35,10 @@ func (s *Services) CreateDocument(documents Documents) error {
 			return &serverError
 		}
 
-		doc := redisearch.NewDocument("document:"+document.Name+strconv.Itoa(i), 1.0)
-		doc.Set("city", document.Name).
-			Set("country", document.Country).
-			Set("location", document.Lat+","+document.Long).
-			Set("id", i)
+		doc := redisearch.NewDocument("document:"+document.Link, 1.0)
+		doc.Set("name", document.Name).
+			Set("link", document.Link).
+			Set("active", document.Active)
 		redisDocuments = append(redisDocuments, doc)
 	}
 

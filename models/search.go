@@ -25,6 +25,7 @@ func (s *Services) SearchAndSuggest(
 	term,
 	sortBy string,
 ) (SearchResponse, error) {
+	totalHits := 0
 	// Searching with limit and sorting
 	docs, total, err := s.Redisearch.Search(redisearch.NewQuery(term).
 		Limit(0, limit).
@@ -43,6 +44,8 @@ func (s *Services) SearchAndSuggest(
 	var auto []redisearch.Suggestion
 
 	if len(response) == 0 {
+		totalHits := 0
+
 		opts := redisearch.SuggestOptions{
 			Num:          5,
 			Fuzzy:        false,
@@ -55,7 +58,7 @@ func (s *Services) SearchAndSuggest(
 		}
 
 		if len(auto) > 0 {
-			total := 0
+
 			for _, suggestion := range auto {
 				docs, total, err = s.Redisearch.Search(redisearch.NewQuery(suggestion.Payload).
 					Limit(0, limit).
@@ -69,10 +72,11 @@ func (s *Services) SearchAndSuggest(
 				for _, doc := range docs {
 					response = append(response, doc)
 				}
+				totalHits += total
 			}
 
 			result := SearchResponse{
-				total,
+				totalHits,
 				response,
 				auto,
 			}
@@ -84,7 +88,7 @@ func (s *Services) SearchAndSuggest(
 
 	} else {
 		result := SearchResponse{
-			total,
+			totalHits,
 			response,
 			auto,
 		}
@@ -92,29 +96,4 @@ func (s *Services) SearchAndSuggest(
 		return result, nil
 	}
 
-}
-
-func (s *Services) GeoSearch(
-	longitude, latitude, radius string, limit int) []redisearch.Document {
-
-	//long, _ := strconv.ParseFloat(longitude, 64)
-	//lat, err := strconv.ParseFloat(latitude, 64)
-	//rad, err := strconv.ParseFloat(radius, 64)
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
-	// Searching for radius of city
-	docs, _, _ := s.Redisearch.Search(redisearch.NewQuery("*").AddFilter(
-		redisearch.Filter{
-			Field: "location",
-			Options: redisearch.GeoFilterOptions{
-				Lon:    42,
-				Lat:    -71,
-				Radius: 100,
-				Unit:   redisearch.KILOMETERS,
-			},
-		},
-	))
-
-	return docs
 }

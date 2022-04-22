@@ -199,67 +199,6 @@
                 }
             }
         },
-        "/api/search/geo": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Search"
-                ],
-                "summary": "Search Redisearch documents",
-                "operationId": "country geo search",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Longitude",
-                        "name": "longitude",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Latitude",
-                        "name": "latitude",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Radius",
-                        "name": "radius",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit number of results",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Ok",
-                        "schema": {
-                            "$ref": "#/definitions/swagger.SwaggerSearchResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiError"
-                        }
-                    },
-                    "500": {
-                        "description": "Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/models.ApiError"
-                        }
-                    }
-                }
-            }
-        },
         "/api/search/{term}": {
             "get": {
                 "produces": [
@@ -352,16 +291,12 @@
         "models.Document": {
             "type": "object",
             "properties": {
-                "country": {
-                    "description": "URL of article",
-                    "type": "string"
-                },
-                "lat": {
-                    "description": "Latitude of city",
-                    "type": "string"
-                },
-                "lng": {
+                "active": {
                     "description": "Longitude of city",
+                    "type": "string"
+                },
+                "link": {
+                    "description": "Latitude of city",
                     "type": "string"
                 },
                 "name": {
@@ -373,20 +308,20 @@
         "swagger.SwaggerResponse": {
             "type": "object",
             "properties": {
-                "country": {
-                    "description": "Author of article",
-                    "type": "string",
-                    "example": "Austria"
-                },
-                "location": {
+                "active": {
                     "description": "Topics of article",
                     "type": "string",
-                    "example": "48.20849,16.37208"
+                    "example": "1985-2003"
+                },
+                "link": {
+                    "description": "Author of article",
+                    "type": "string",
+                    "example": "https://www.nba.com"
                 },
                 "name": {
                     "description": "URL of doc",
                     "type": "string",
-                    "example": "Wien"
+                    "example": "Michael Jordan"
                 }
             }
         },

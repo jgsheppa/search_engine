@@ -51,7 +51,7 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 		queryLimit = limitAsInt
 	}
 
-	sortBy := "city"
+	sortBy := "name"
 	if len(sort) > 0 {
 		sortBy = sort
 	}
@@ -61,7 +61,7 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 		isAscending = false
 	}
 
-	highlighted := []string{"city"}
+	highlighted := []string{"name"}
 
 	result, err := rdb.s.SearchAndSuggest(isAscending, queryLimit, highlighted, term, sortBy)
 	if err != nil {
@@ -70,42 +70,5 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(result)
-	return
-}
-
-// GeoSearch godoc
-// @Summary Search Redisearch documents
-// @Tags Search
-// @ID country geo search
-// @Param longitude query string true "Longitude"
-// @Param latitude query string true "Latitude"
-// @Param radius query string true "Radius"
-// @Param limit query int false "Limit number of results"
-// @Produce json
-// @Success 200 {object} swagger.SwaggerSearchResponse "Ok"
-// @Failure 404 {object} models.ApiError "Not Found"
-// @Failure 500 {object} models.ApiError "Server Error"
-// @Router /api/search/geo [get]
-func (rdb *RedisDB) GeoSearch(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	longitude := r.FormValue("longitude")
-	latitude := r.FormValue("latitude")
-	radius := r.FormValue("radius")
-	limit := r.FormValue("limit")
-
-	queryLimit := 5
-	if len(limit) > 0 {
-		limitAsInt, err := strconv.Atoi(limit)
-		if err != nil {
-			json.NewEncoder(w).Encode(err)
-			json.NewEncoder(w).Encode(models.ValidationError)
-			return
-		}
-		queryLimit = limitAsInt
-	}
-
-	docs := rdb.s.GeoSearch(longitude, latitude, radius, queryLimit)
-
-	json.NewEncoder(w).Encode(docs)
 	return
 }

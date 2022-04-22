@@ -4,14 +4,12 @@ import (
 	"testing"
 )
 
-var expectedResult = [12]string{"On Pair", "On", "On Pair Programming", "Pair Programming",
-	"Pair", "Programming", "New Topic", "New", "Topic"}
+var expectedResult = [12]string{"New Topic", "New", "Topic"}
 
 func TestCreateSuggestions(t *testing.T) {
 
 	article := Document{
-		Country: "On Pair Programming",
-		Name:    "New Topic",
+		Name: "New Topic",
 	}
 
 	t.Run("suggestion output", func(t *testing.T) {

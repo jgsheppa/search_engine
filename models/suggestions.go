@@ -8,12 +8,8 @@ import (
 func CreateSuggestions(document Document) []redisearch.Suggestion {
 	var suggestion []redisearch.Suggestion
 
-	splitCountry := strings.Split(document.Country, " ")
-	text := SuggestionFactory(splitCountry)
-	suggestion = append(suggestion, text...)
-
-	splitCity := strings.Split(document.Name, " ")
-	topic := SuggestionFactory(splitCity)
+	splitName := strings.Split(document.Name, " ")
+	topic := SuggestionFactory(splitName)
 	suggestion = append(suggestion, topic...)
 
 	return suggestion

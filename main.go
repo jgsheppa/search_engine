@@ -60,9 +60,6 @@ func main() {
 	userMw := middleware.User{
 		UserService: services.User,
 	}
-	//requireUserMw := middleware.RequireUser{
-	//	User: userMw,
-	//}
 
 	r := mux.NewRouter()
 	searchController := controllers.NewDocuments(*services)
@@ -76,20 +73,12 @@ func main() {
 	r.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger", http.FileServer(http.Dir("swagger"))))
 	r.HandleFunc("/", controllers.DisplayAPIRoutes).Methods("GET")
 	// Document routes
-	r.HandleFunc("/api/document", userMw.ApplyFn(searchController.PostDocuments)).Methods("POST")
+	r.HandleFunc("/api/document", searchController.PostDocuments).Methods("POST")
 	r.HandleFunc("/api/document/delete/{documentName}", userMw.ApplyFn(searchController.DeleteDocument)).
 		Methods("DELETE")
 	// Index routes
 	r.HandleFunc("/api/index/delete", userMw.ApplyFn(searchController.DropIndex)).Methods("DELETE")
 	r.HandleFunc("/api/index/create", userMw.ApplyFn(searchController.CreateIndex)).Methods("POST")
-
-	// Search routes
-	r.HandleFunc("/api/search/geo", searchController.GeoSearch).
-		Queries("longitude", "{longitude}").
-		Queries("latitude", "{latitude}").
-		Queries("radius", "{radius}").
-		Queries("limit", "{limit}").
-		Methods("GET")
 
 	// Search routes
 	r.HandleFunc("/api/search/{term}", searchController.Search).Methods("GET", "OPTIONS")

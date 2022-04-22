@@ -47,6 +47,7 @@ type Field struct {
 // @Router /api/document [post]
 func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 	var documents models.Documents
+
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		json.NewEncoder(w).Encode(models.LargePayloadError)

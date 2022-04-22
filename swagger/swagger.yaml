@@ -94,6 +94,10 @@ paths:
             items:
               $ref: '#/definitions/models.Document'
             type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiError'
         "422":
           description: Unprocessable Entity
           schema:
@@ -115,6 +119,10 @@ paths:
           description: Ok
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiError'
         "404":
           description: Not Found
           schema:
@@ -129,6 +137,10 @@ paths:
           description: Ok
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiError'
       summary: Create Redis index for BestPracticer guides
       tags:
       - Index
@@ -139,6 +151,10 @@ paths:
           description: Ok
           schema:
             type: string
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiError'
       summary: Delete all documents from Redisearch
       tags:
       - Index

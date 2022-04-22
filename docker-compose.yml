@@ -11,19 +11,12 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
-#  api:
-#    container_name: api
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    env_file: config.yaml
-#    ports:
-#      - "3001:3001"
-#    depends_on:
-#      - redis
-#    networks:
-#      - default
-#    deploy:
-#      replicas: 1
-#      restart_policy:
-#        condition: on-failure
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: jamessheppard
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: search_engine
+    ports:
+      - '5431:5432'

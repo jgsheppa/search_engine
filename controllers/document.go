@@ -42,6 +42,7 @@ type Field struct {
 // @Tags Document
 // @Param Body body models.Documents true "The body to create a Redis document for an article"
 // @Success 201 {object} models.Documents
+// @Success 401 {object} models.ApiError "Unauthorized"
 // @Failure 422 {object} models.ApiError
 // @Router /api/document [post]
 func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
@@ -49,6 +50,7 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		json.NewEncoder(w).Encode(models.LargePayloadError)
+		w.WriteHeader(models.LargePayloadError.HttpStatus)
 		return
 	}
 	if err := r.Body.Close(); err != nil {
@@ -60,6 +62,7 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(422) // unprocessable entity
 		json.NewEncoder(w).Encode(1)
 		json.NewEncoder(w).Encode(models.ValidationError)
+		w.WriteHeader(models.ValidationError.HttpStatus)
 		return
 	}
 
@@ -70,8 +73,8 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if err := json.NewEncoder(w).Encode(documents); err != nil {
-		json.NewEncoder(w).Encode(err)
 		json.NewEncoder(w).Encode(models.ValidationError)
+		w.WriteHeader(models.ValidationError.HttpStatus)
 		return
 	}
 	fmt.Fprintln(w, "Document successfully uploaded")
@@ -83,6 +86,7 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 // @Param documentName path string true "search term"
 // @ID documentName
 // @Success 200 {string} string "Ok"
+// @Success 401 {object} models.ApiError "Unauthorized"
 // @Failure 404 {object} models.ApiError
 // @Router /api/document/delete/{documentName} [delete]
 func (rdb *RedisDB) DeleteDocument(w http.ResponseWriter, r *http.Request) {
@@ -91,6 +95,7 @@ func (rdb *RedisDB) DeleteDocument(w http.ResponseWriter, r *http.Request) {
 	err := rdb.s.DeleteDocument(term)
 	if err != nil {
 		json.NewEncoder(w).Encode(models.NotFoundError)
+		w.WriteHeader(models.NotFoundError.HttpStatus)
 		return
 	}
 	w.WriteHeader(http.StatusOK)

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/jgsheppa/search_engine/controllers"
+	"github.com/jgsheppa/search_engine/middleware"
 	"github.com/jgsheppa/search_engine/models"
 	"github.com/jgsheppa/search_engine/swagger"
 	"github.com/spf13/viper"
@@ -26,12 +27,27 @@ import (
 // @query.collection.format multi
 // @schemes http https
 func main() {
-	port, baseUrl, httpProtocol := SetupConfig()
+	port, baseUrl, psqlInfo, httpProtocol := SetupConfig()
 
-	services, err := models.NewServices()
+	services, err := models.NewServices(psqlInfo)
 	if err != nil {
 		panic(err)
 	}
+
+	services.AutoMigrate()
+
+	emailAddress := os.Getenv("ADMIN_EMAIL")
+	name := os.Getenv("ADMIN_NAME")
+	password := os.Getenv("ADMIN_PW")
+
+	user := models.User{
+		Email:    emailAddress,
+		Name:     name,
+		Password: password,
+		Role:     "admin",
+	}
+
+	services.User.Create(&user)
 
 	swagger.SwaggerInfo.Title = "Redisearch Search Engine"
 	swagger.SwaggerInfo.Description = "This is a search engine built with Redisearch"
@@ -39,6 +55,10 @@ func main() {
 	swagger.SwaggerInfo.Host = baseUrl
 	swagger.SwaggerInfo.BasePath = "/"
 	swagger.SwaggerInfo.Schemes = []string{httpProtocol}
+
+	userMw := middleware.RequireUser{
+		UserService: services.User,
+	}
 
 	r := mux.NewRouter()
 	searchController := controllers.NewDocuments(*services)
@@ -48,11 +68,12 @@ func main() {
 	r.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger", http.FileServer(http.Dir("swagger"))))
 	r.HandleFunc("/", controllers.DisplayAPIRoutes).Methods("GET")
 	// Document routes
-	r.HandleFunc("/api/document", searchController.PostDocuments).Methods("POST")
-	r.HandleFunc("/api/document/delete/{documentName}", searchController.DeleteDocument).Methods("DELETE")
+	r.HandleFunc("/api/document", userMw.ApplyFn(searchController.PostDocuments)).Methods("POST")
+	r.HandleFunc("/api/document/delete/{documentName}", userMw.ApplyFn(searchController.DeleteDocument)).
+		Methods("DELETE")
 	// Index routes
-	r.HandleFunc("/api/index/delete", searchController.DropIndex).Methods("DELETE")
-	r.HandleFunc("/api/index/create", searchController.CreateIndex).Methods("POST")
+	r.HandleFunc("/api/index/delete", userMw.ApplyFn(searchController.DropIndex)).Methods("DELETE")
+	r.HandleFunc("/api/index/create", userMw.ApplyFn(searchController.CreateIndex)).Methods("POST")
 
 	// Search routes
 	r.HandleFunc("/api/search/geo", searchController.GeoSearch).
@@ -99,7 +120,7 @@ func main() {
 
 }
 
-func SetupConfig() (portNum, baseURL, http string) {
+func SetupConfig() (portNum, baseURL, psqlInfo, http string) {
 	port := "3001"
 	baseUrl := "localhost:3001"
 	httpProtocol := "http"
@@ -108,16 +129,18 @@ func SetupConfig() (portNum, baseURL, http string) {
 		viper.AutomaticEnv()
 		port = os.Getenv("PORT")
 		baseUrl = os.Getenv("BASE_URL")
+		psqlInfo = os.Getenv("DATABASE_URL")
 		httpProtocol = "https"
-		return port, baseUrl, httpProtocol
+		return port, baseUrl, psqlInfo, httpProtocol
 	}
 	config := "config"
 	viper.SetConfigName(config)
 	viper.AddConfigPath(".")
 	err := viper.ReadInConfig()
-
 	if err != nil {
 		log.Fatalf("Error while reading config file %s", err)
 	}
-	return port, baseUrl, httpProtocol
+	psqlInfo = viper.Get("DATABASE_URL").(string)
+
+	return port, baseUrl, psqlInfo, httpProtocol
 }

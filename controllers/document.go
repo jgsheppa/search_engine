@@ -60,7 +60,6 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 	if err := json.Unmarshal(body, &documents); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
-		json.NewEncoder(w).Encode(1)
 		json.NewEncoder(w).Encode(models.ValidationError)
 		w.WriteHeader(models.ValidationError.HttpStatus)
 		return

@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  controllers.LoginForm:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
   models.ApiError:
     properties:
       description:
@@ -76,6 +83,41 @@ info:
   title: Redisearch Search Engine
   version: "1.0"
 paths:
+  /api/auth/login:
+    post:
+      parameters:
+      - description: Credentials
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.LoginForm'
+      responses:
+        "201":
+          description: Ok
+          schema:
+            type: string
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/models.ApiError'
+      summary: Login to the Redisearch API
+      tags:
+      - Auth
+  /api/auth/logout:
+    post:
+      responses:
+        "201":
+          description: Ok
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/models.ApiError'
+      summary: Logout of the Redisearch API
+      tags:
+      - Auth
   /api/document:
     post:
       parameters:

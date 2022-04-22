@@ -17,8 +17,8 @@ func (mw *RequireUser) ApplyFn(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		user := context.User(r.Context())
 		if user == nil {
-			w.WriteHeader(http.StatusUnauthorized)
 			json.NewEncoder(w).Encode(models.AuthError)
+			w.WriteHeader(models.AuthError.HttpStatus)
 			return
 		}
 		next(w, r)

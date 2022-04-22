@@ -34,11 +34,12 @@ func main() {
 		panic(err)
 	}
 
+	services.DestructiveReset()
 	services.AutoMigrate()
 
-	emailAddress := os.Getenv("ADMIN_EMAIL")
-	name := os.Getenv("ADMIN_NAME")
-	password := os.Getenv("ADMIN_PW")
+	emailAddress := viper.Get("ADMIN_EMAIL").(string)
+	name := viper.Get("ADMIN_NAME").(string)
+	password := viper.Get("ADMIN_PW").(string)
 
 	user := models.User{
 		Email:    emailAddress,
@@ -62,7 +63,11 @@ func main() {
 
 	r := mux.NewRouter()
 	searchController := controllers.NewDocuments(*services)
+	authController := controllers.Auth(services.User)
 
+	// Auth
+	r.HandleFunc("/api/auth/login", authController.Login).Methods("POST")
+	r.HandleFunc("/api/auth/logout", authController.Logout).Methods("POST")
 	// Swagger routes
 	r.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 	r.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger", http.FileServer(http.Dir("swagger"))))

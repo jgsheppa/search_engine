@@ -83,6 +83,15 @@ func NewPool() *redis.Pool {
 	}
 }
 
+// Used to delete old database tables and entries in development
+func (s *Services) DestructiveReset() error {
+	err := s.db.Migrator().DropTable(&User{})
+	if err != nil {
+		return err
+	}
+	return s.AutoMigrate()
+}
+
 // AutoMigrate will attempt to automigrate all database tables
 func (s *Services) AutoMigrate() error {
 	return s.db.AutoMigrate(&User{})

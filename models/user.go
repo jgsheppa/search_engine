@@ -1,7 +1,7 @@
 package models
 
 import (
-	"os"
+	"github.com/spf13/viper"
 	"regexp"
 	"strings"
 
@@ -50,7 +50,7 @@ type UserService interface {
 func NewUserService(db *gorm.DB) UserService {
 	ug := &userGorm{db}
 
-	hmacSecretKey := os.Getenv("HMAC_SECRET_KEY")
+	hmacSecretKey := viper.Get("HMAC_SECRET_KEY").(string)
 
 	hmac := hash.NewHMAC(hmacSecretKey)
 	uv := newUserValidator(ug, hmac)
@@ -219,7 +219,7 @@ func (uv *userValidator) bcryptPassword(user *User) error {
 	if user.Password == "" {
 		return nil
 	}
-	userPwPepper := os.Getenv("PASSWORD_PEPPER")
+	userPwPepper := viper.Get("PASSWORD_PEPPER").(string)
 
 	pwBytes := []byte(user.Password + userPwPepper)
 	hashedBytes, err := bcrypt.GenerateFromPassword(pwBytes, bcrypt.DefaultCost)
@@ -373,8 +373,7 @@ func (us *userService) Authenticate(email, password string) (*User, error) {
 		return nil, err
 	}
 
-	userPwPepper := os.Getenv("PASSWORD_PEPPER")
-
+	userPwPepper := viper.Get("PASSWORD_PEPPER").(string)
 	err = bcrypt.CompareHashAndPassword([]byte(foundUser.PasswordHash), []byte(password+userPwPepper))
 	if err != nil {
 		switch err {

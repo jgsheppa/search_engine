@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jgsheppa/search_engine/models"
 	"net/http"
+	"os"
 	"strconv"
 )
 
@@ -32,7 +33,8 @@ type SuggestOptions struct {
 func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	//Allow CORS here By * or specific origin
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	feUrl := os.Getenv("FE_URL")
+	w.Header().Set("Access-Control-Allow-Origin", feUrl)
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,access-control-allow-origin, access-control-allow-headers")
 
 	term := mux.Vars(r)["term"]

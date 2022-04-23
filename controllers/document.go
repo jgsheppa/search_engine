@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/gomodule/redigo/redis"
 	"github.com/gorilla/mux"
@@ -36,6 +35,10 @@ type Field struct {
 	// Field type
 	Type string `json:"type"`
 } // @name Field
+
+type Response struct {
+	Message string `json:"message"`
+}
 
 // PostDocuments godoc
 // @Summary Post documents to Redisearch
@@ -71,8 +74,12 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(err)
 	}
 
+	response := Response{
+		Message: "Document successfully uploaded",
+	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	fmt.Fprintln(w, http.StatusCreated, "Document successfully uploaded")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(response)
 }
 
 // DeleteDocument godoc
@@ -93,6 +100,11 @@ func (rdb *RedisDB) DeleteDocument(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(models.NotFoundError.HttpStatus)
 		return
 	}
+
+	response := Response{
+		Message: "Document successfully deleted",
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, http.StatusOK, "Document successfully deleted")
+	json.NewEncoder(w).Encode(response)
 }

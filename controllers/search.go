@@ -71,6 +71,8 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(models.ValidationError)
 		return
 	}
+
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(result)
 	return
 }

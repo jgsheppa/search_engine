@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"fmt"
+	"encoding/json"
 	"github.com/jgsheppa/search_engine/models"
 	"net/http"
 )
@@ -18,8 +18,13 @@ func (rdb *RedisDB) DropIndex(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Cannot drop index - it does not exist", http.StatusNotFound)
 		return
 	}
+
+	response := Response{
+		Message: "Index successfully deleted",
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, http.StatusOK, "Index successfully deleted")
+	json.NewEncoder(w).Encode(response)
 }
 
 // CreateIndex godoc
@@ -35,6 +40,11 @@ func (rdb *RedisDB) CreateIndex(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Index already exists", http.StatusNotFound)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, http.StatusOK, "Index successfully created")
+
+	response := Response{
+		Message: "Index successfully created",
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(response)
 }

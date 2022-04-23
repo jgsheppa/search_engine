@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/jgsheppa/search_engine/context"
 	"github.com/jgsheppa/search_engine/models"
 	"github.com/jgsheppa/search_engine/rand"
@@ -129,7 +128,8 @@ func (u *User) Login(w http.ResponseWriter, r *http.Request) {
 		Message: "Login Successful",
 		Token:   token,
 	}
-	fmt.Fprintln(w, http.StatusOK, response)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
 }
 
 // Logout godoc
@@ -165,5 +165,9 @@ func (u *User) Logout(w http.ResponseWriter, r *http.Request) {
 
 	user = context.User(r.Context())
 
-	fmt.Fprintln(w, http.StatusOK, "Logout successful")
+	response := Response{
+		Message: "Logout Successful",
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
 }

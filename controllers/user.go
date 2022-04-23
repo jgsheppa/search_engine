@@ -57,6 +57,11 @@ type LoginForm struct {
 	Password string `schema:"password" json:"password"`
 }
 
+type LoginResponse struct {
+	Message string `json:"message"`
+	Token   string `json:"token"`
+}
+
 func (u *User) signIn(w http.ResponseWriter, user *models.User) error {
 	if user.Remember == "" {
 		token, err := rand.RememberToken()
@@ -119,7 +124,12 @@ func (u *User) Login(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	fmt.Fprintln(w, http.StatusOK, "Login successful")
+	token := user.Remember
+	response := LoginResponse{
+		Message: "Login Successful",
+		Token:   token,
+	}
+	fmt.Fprintln(w, http.StatusOK, response)
 }
 
 // Logout godoc

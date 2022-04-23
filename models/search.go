@@ -25,9 +25,8 @@ func (s *Services) SearchAndSuggest(
 	term,
 	sortBy string,
 ) (SearchResponse, error) {
-	totalHits := 0
 	// Searching with limit and sorting
-	docs, total, err := s.Redisearch.Search(redisearch.NewQuery(term).
+	docs, _, err := s.Redisearch.Search(redisearch.NewQuery(term).
 		Limit(0, limit).
 		Highlight(highlightedFields, "<b>", "</b>").
 		SetSortBy(sortBy, order))
@@ -44,8 +43,6 @@ func (s *Services) SearchAndSuggest(
 	var auto []redisearch.Suggestion
 
 	if len(response) == 0 {
-		totalHits := 0
-
 		opts := redisearch.SuggestOptions{
 			Num:          5,
 			Fuzzy:        false,
@@ -58,9 +55,8 @@ func (s *Services) SearchAndSuggest(
 		}
 
 		if len(auto) > 0 {
-
 			for _, suggestion := range auto {
-				docs, total, err = s.Redisearch.Search(redisearch.NewQuery(suggestion.Payload).
+				docs, _, err = s.Redisearch.Search(redisearch.NewQuery(suggestion.Payload).
 					Limit(0, limit).
 					Highlight(highlightedFields, "<b>", "</b>").
 					SetSortBy(sortBy, order))
@@ -70,13 +66,21 @@ func (s *Services) SearchAndSuggest(
 				}
 
 				for _, doc := range docs {
-					response = append(response, doc)
+					skip := false
+					for _, res := range response {
+						if res.Id == doc.Id {
+							skip = true
+							break
+						}
+					}
+					if !skip {
+						response = append(response, doc)
+					}
 				}
-				totalHits += total
 			}
 
 			result := SearchResponse{
-				totalHits,
+				len(response),
 				response,
 				auto,
 			}
@@ -88,7 +92,7 @@ func (s *Services) SearchAndSuggest(
 
 	} else {
 		result := SearchResponse{
-			totalHits,
+			len(response),
 			response,
 			auto,
 		}

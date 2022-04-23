@@ -72,12 +72,7 @@ func (rdb *RedisDB) PostDocuments(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if err := json.NewEncoder(w).Encode(documents); err != nil {
-		json.NewEncoder(w).Encode(models.ValidationError)
-		w.WriteHeader(models.ValidationError.HttpStatus)
-		return
-	}
-	fmt.Fprintln(w, "Document successfully uploaded")
+	fmt.Fprintln(w, http.StatusCreated, "Document successfully uploaded")
 }
 
 // DeleteDocument godoc

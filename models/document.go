@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/RediSearch/redisearch-go/redisearch"
+	"strconv"
 )
 
 type RedisDB struct {
@@ -27,7 +28,7 @@ type Documents []Document
 func (s *Services) CreateDocument(documents Documents) error {
 	var redisDocuments []redisearch.Document
 
-	for _, document := range documents {
+	for i, document := range documents {
 		suggestion := CreateSuggestions(document)
 
 		err := s.Autocomplete.AddTerms(suggestion...)
@@ -35,7 +36,7 @@ func (s *Services) CreateDocument(documents Documents) error {
 			return &serverError
 		}
 
-		doc := redisearch.NewDocument("document:"+document.Link, 1.0)
+		doc := redisearch.NewDocument("document:"+document.Name+":"+strconv.Itoa(i), 1.0)
 		doc.Set("name", document.Name).
 			Set("link", document.Link).
 			Set("active", document.Active)

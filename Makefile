@@ -17,8 +17,8 @@ test_data:
 	curl -X POST -H "Content-Type: application/json" -d @./nba_players.json http://localhost:3001/api/document
 
 prod_data:
-	curl -X POST -H "Content-Type: application/json" -d @./test_data.json \
- https://bp-search-engine.herokuapp.com/api/document/article
+	curl -X POST -H "Content-Type: application/json" -d @./nba_players.json \
+ https://bp-search-engine.herokuapp.com/api/document
 
 # Commands for Heroku deployment with Heroku container stack
 # Note: You'll need to build the Docker image before pushing

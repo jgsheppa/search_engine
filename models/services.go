@@ -34,9 +34,17 @@ func NewServices(connectionInfo string) (*Services, error) {
 		},
 	)
 
-	db, err := gorm.Open(postgres.Open(connectionInfo), &gorm.Config{Logger: newLogger})
-	if err != nil {
-		panic(err)
+	var db *gorm.DB
+	if os.Getenv("IS_PROD") == "true" {
+		db, err = gorm.Open(postgres.Open(connectionInfo), &gorm.Config{})
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		db, err = gorm.Open(postgres.Open(connectionInfo), &gorm.Config{Logger: newLogger})
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	return &Services{
@@ -83,7 +91,7 @@ func NewPool() *redis.Pool {
 	}
 }
 
-// Used to delete old database tables and entries in development
+// DestructiveReset used to delete old database tables and entries in development
 func (s *Services) DestructiveReset() error {
 	err := s.db.Migrator().DropTable(&User{})
 	if err != nil {

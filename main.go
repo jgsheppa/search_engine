@@ -26,6 +26,10 @@ import (
 // @BasePath /
 // @query.collection.format multi
 // @schemes http https
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	port, baseUrl, psqlInfo, httpProtocol := SetupConfig()
 
@@ -73,7 +77,7 @@ func main() {
 	r.PathPrefix("/swagger/").Handler(http.StripPrefix("/swagger", http.FileServer(http.Dir("swagger"))))
 	r.HandleFunc("/", controllers.DisplayAPIRoutes).Methods("GET")
 	// Document routes
-	r.HandleFunc("/api/document", searchController.PostDocuments).Methods("POST")
+	r.HandleFunc("/api/document", userMw.ApplyFn(searchController.PostDocuments)).Methods("POST")
 	r.HandleFunc("/api/document/delete/{documentName}", userMw.ApplyFn(searchController.DeleteDocument)).
 		Methods("DELETE")
 	// Index routes

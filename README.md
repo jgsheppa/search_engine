@@ -19,6 +19,11 @@ then `make run` to start docker and the Go server separately. This allows me to 
 down Docker. There is also a Dockerfile for the API which can be built and run in development, however I use it for 
 deployment purposes.
 
+### Authorization 
+This API requires a bearer token for certain endpoints. You can retrieve your bearer token by logging in to the API with
+your credentials from the `config.yaml` file. Once you have your bearer token, you can pass it in as a header for curl 
+commands or enter it in the Swagger UI.
+
 ### Redisearch Schema
 In order to customize this API for your own dataset, you will need to change the schema in `models/schema.go`. The 
 `Document` type, the variables denoting the schema values, and the schema in `models.CreateSchema` will need to be 

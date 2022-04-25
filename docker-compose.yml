@@ -15,7 +15,7 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_USER: jamessheppard
+      POSTGRES_USER: username
       POSTGRES_PASSWORD: password
       POSTGRES_DB: search_engine
     ports:

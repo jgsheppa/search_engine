@@ -53,7 +53,7 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 		queryLimit = limitAsInt
 	}
 
-	sortBy := "name"
+	sortBy := models.Name
 	if len(sort) > 0 {
 		sortBy = sort
 	}
@@ -63,7 +63,7 @@ func (rdb *RedisDB) Search(w http.ResponseWriter, r *http.Request) {
 		isAscending = false
 	}
 
-	highlighted := []string{"name"}
+	highlighted := []string{models.Name}
 
 	result, err := rdb.s.SearchAndSuggest(isAscending, queryLimit, highlighted, term, sortBy)
 	if err != nil {

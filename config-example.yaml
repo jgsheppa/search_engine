@@ -1,0 +1,12 @@
+REDIS_ADDRESS: "localhost:6379"
+REDIS_PW: ""
+PORT: "3001"
+BASE_URL: "localhost:3000"
+DATABASE_URL: "host=127.0.0.1 port=5432 user=username password=password dbname=redis_engine sslmode=disable"
+
+ADMIN_EMAIL: "user@name.com"
+ADMIN_NAME: "User Name"
+ADMIN_PW: "password"
+
+HMAC_SECRET_KEY: "BtHG&D3JKJdT6x!h"
+PASSWORD_PEPPER: "yrhS5@rz?ccs6rQ@"

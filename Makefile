@@ -1,33 +1,25 @@
+# Start the go server
 run:
 	go run main.go
 
+# Start redis and postgres with docker-compose
 docker-run:
-	docker run --publish 3000:3000 docker-build:latest
+	docker-compose up
 
+# Build a docker image from the Dockerfile
 build:
 	docker build --tag docker-build:latest .
 
+# Run the go tests
 test:
 	go test -v ./...
 
+# If you update the swagger documentation, run this command to update the swagger UI
 docs:
 	swag init -g ./main.go -o ./swagger
 
+# You will need to add the Bearer token to the header for this to work
 test_data:
 	curl -X POST -H "Content-Type: application/json" -d @./nba_players.json http://localhost:3001/api/document
 
-prod_data:
-	curl -X POST -H "Content-Type: application/json" -d @./nba_players.json \
- https://bp-search-engine.herokuapp.com/api/document
 
-# Commands for Heroku deployment with Heroku container stack
-# Note: You'll need to build the Docker image before pushing
-# it to Heroku
-heroku-login:
-	heroku container:login
-
-heroku-push:
-	heroku container:push web --app bp-search-engine
-
-heroku-release:
-	heroku container:release web --app bp-search-engine

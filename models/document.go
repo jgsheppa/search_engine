@@ -8,22 +8,6 @@ type RedisDB struct {
 	redisSearch redisearch.Client
 }
 
-type Document struct {
-	// Title of article
-	Name string `json:"name"`
-	// Latitude of city
-	Link string `json:"link"`
-	// Longitude of city
-	Active string `json:"active"`
-}
-
-type Field struct {
-	Name string `json:"name"`
-	Type string `json:"type"`
-}
-
-type Documents []Document
-
 func (s *Services) CreateDocument(documents Documents) error {
 	var redisDocuments []redisearch.Document
 

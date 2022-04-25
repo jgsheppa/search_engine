@@ -5,15 +5,32 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
+const (
+	Name   = "name"
+	Link   = "link"
+	Active = "active"
+)
+
+type Document struct {
+	// Name of NBA player
+	Name string `json:"name"`
+	// Link to player page
+	Link string `json:"link"`
+	// Active represents the years a player was active
+	Active string `json:"active"`
+}
+
+type Documents []Document
+
 // CreateSchema is used to create the schema for your Redisearch documents,
 // which will allow you to add your data in the form of these documents
 func CreateSchema() *redisearch.Schema {
 	sc := redisearch.NewSchema(redisearch.DefaultOptions).
-		AddField(redisearch.NewTextFieldOptions("name",
+		AddField(redisearch.NewTextFieldOptions(Name,
 			redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
-		AddField(redisearch.NewTextFieldOptions("link",
+		AddField(redisearch.NewTextFieldOptions(Link,
 			redisearch.TextFieldOptions{Weight: 5.0, Sortable: true})).
-		AddField(redisearch.NewTextFieldOptions("active",
+		AddField(redisearch.NewTextFieldOptions(Active,
 			redisearch.TextFieldOptions{Weight: 5.0, Sortable: true}))
 
 	return sc

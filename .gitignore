@@ -10,6 +10,3 @@ data
 
 # Go binary
 search_engine
-
-# Test data
-nba_players.json

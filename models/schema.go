@@ -5,12 +5,15 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
+// These values are used to build the schema and in the controller package
+// for sortable and highlighted fields.
 const (
 	Name   = "name"
 	Link   = "link"
 	Active = "active"
 )
 
+// Document should reflect the data structure you would like to index with Redis
 type Document struct {
 	// Name of NBA player
 	Name string `json:"name"`

@@ -20,6 +20,6 @@ docs:
 
 # You will need to add the Bearer token to the header for this to work
 test_data:
-	curl -X POST -H "Content-Type: application/json" -d @./nba_players.json http://localhost:3001/api/document
+	curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer _" -d @./nba_players.json http://localhost:3001/api/document
 
 

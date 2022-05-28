@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/RediSearch/redisearch-go/redisearch"
+	"sync"
 )
 
 type RedisDB struct {
@@ -10,6 +11,9 @@ type RedisDB struct {
 
 func (s *Services) CreateDocument(documents Documents) error {
 	var redisDocuments []redisearch.Document
+
+	var wg sync.WaitGroup
+	wg.Add(len(documents))
 
 	for _, document := range documents {
 		suggestion := CreateSuggestions(document)
@@ -24,7 +28,9 @@ func (s *Services) CreateDocument(documents Documents) error {
 			Set("link", document.Link).
 			Set("active", document.Active)
 		redisDocuments = append(redisDocuments, doc)
+		wg.Done()
 	}
+	wg.Wait()
 
 	// Index the document. The API accepts multiple documents at a time
 	if err := s.Redisearch.Index(redisDocuments...); err != nil {
